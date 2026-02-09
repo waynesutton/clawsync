@@ -16,21 +16,57 @@ import { internal } from '../_generated/api';
 
 // MCP server handler
 export const handler = httpAction(async (ctx, request) => {
-  const body = await request.json();
+  const body: { method: string; params?: Record<string, unknown> } = await request.json();
   const { method, params } = body;
 
   switch (method) {
-    case 'tools/list':
-      return handleToolsList(ctx);
+    case 'tools/list': {
+      // Get all active + approved skills
+      const skills: Array<{
+        name: string;
+        description: string;
+        config?: string;
+      }> = await ctx.runQuery(internal.skillRegistry.getActiveApproved);
 
-    case 'tools/call':
-      return handleToolsCall(ctx, params);
+      const tools = skills.map((skill) => ({
+        name: skill.name,
+        description: skill.description,
+        inputSchema: skill.config ? JSON.parse(skill.config).inputSchema : {},
+      }));
 
-    case 'resources/list':
-      return handleResourcesList(ctx);
+      return new Response(
+        JSON.stringify({ tools }),
+        { status: 200, headers: { 'Content-Type': 'application/json' } }
+      );
+    }
 
-    case 'resources/read':
-      return handleResourcesRead(ctx, params);
+    case 'tools/call': {
+      // TODO: Implement tool call routing
+      // 1. Find skill by name
+      // 2. Run through security checker
+      // 3. Execute skill
+      // 4. Return result
+      return new Response(
+        JSON.stringify({ error: 'Not implemented' }),
+        { status: 501, headers: { 'Content-Type': 'application/json' } }
+      );
+    }
+
+    case 'resources/list': {
+      // TODO: Return knowledge base resources
+      return new Response(
+        JSON.stringify({ resources: [] }),
+        { status: 200, headers: { 'Content-Type': 'application/json' } }
+      );
+    }
+
+    case 'resources/read': {
+      // TODO: Return knowledge base content
+      return new Response(
+        JSON.stringify({ error: 'Not implemented' }),
+        { status: 501, headers: { 'Content-Type': 'application/json' } }
+      );
+    }
 
     default:
       return new Response(
@@ -39,54 +75,3 @@ export const handler = httpAction(async (ctx, request) => {
       );
   }
 });
-
-async function handleToolsList(ctx: Parameters<typeof httpAction>[0] extends (ctx: infer C, req: unknown) => unknown ? C : never) {
-  // Get all active + approved skills
-  const skills = await ctx.runQuery(internal.skillRegistry.getActiveApproved);
-
-  const tools = skills.map((skill) => ({
-    name: skill.name,
-    description: skill.description,
-    inputSchema: skill.config ? JSON.parse(skill.config).inputSchema : {},
-  }));
-
-  return new Response(
-    JSON.stringify({ tools }),
-    { status: 200, headers: { 'Content-Type': 'application/json' } }
-  );
-}
-
-async function handleToolsCall(
-  ctx: Parameters<typeof httpAction>[0] extends (ctx: infer C, req: unknown) => unknown ? C : never,
-  params: { name: string; arguments: Record<string, unknown> }
-) {
-  // TODO: Implement tool call routing
-  // 1. Find skill by name
-  // 2. Run through security checker
-  // 3. Execute skill
-  // 4. Return result
-
-  return new Response(
-    JSON.stringify({ error: 'Not implemented' }),
-    { status: 501, headers: { 'Content-Type': 'application/json' } }
-  );
-}
-
-async function handleResourcesList(_ctx: Parameters<typeof httpAction>[0] extends (ctx: infer C, req: unknown) => unknown ? C : never) {
-  // TODO: Return knowledge base resources
-  return new Response(
-    JSON.stringify({ resources: [] }),
-    { status: 200, headers: { 'Content-Type': 'application/json' } }
-  );
-}
-
-async function handleResourcesRead(
-  _ctx: Parameters<typeof httpAction>[0] extends (ctx: infer C, req: unknown) => unknown ? C : never,
-  _params: { uri: string }
-) {
-  // TODO: Return knowledge base content
-  return new Response(
-    JSON.stringify({ error: 'Not implemented' }),
-    { status: 501, headers: { 'Content-Type': 'application/json' } }
-  );
-}

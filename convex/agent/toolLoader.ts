@@ -40,7 +40,9 @@ export async function loadTools(ctx: ActionCtx): Promise<ToolSet> {
 
   // Load tools from enabled MCP servers
   try {
-    const mcpServers = await ctx.runQuery(api.mcpServers.getEnabledApproved);
+    const mcpServers: Array<{ name: string; url?: string; _id: any }> =
+      // @ts-expect-error Deep type instantiation in generated API types
+      await ctx.runQuery(api.mcpServers.getEnabledApproved);
 
     for (const server of mcpServers) {
       if (!server.url) continue;

@@ -5,6 +5,8 @@ All notable changes to ClawSync are documented here.
 ## [Unreleased]
 
 ### Added
+- `convex/xTwitterActions.ts` for Node.js runtime X/Twitter actions (split from xTwitter.ts)
+- `threads.create` internal mutation for HTTP API thread creation
 - Streaming message subscription via `convex/messages.ts` using `listMessages` + `syncStreams` from `@convex-dev/agent`
 - Frontend real-time message updates with `useThreadMessages` hook from `@convex-dev/agent/react`
 - Tool call display in chat UI with expandable cards showing input and output
@@ -26,6 +28,22 @@ All notable changes to ClawSync are documented here.
 - `convex/_generated/` added to `.gitignore`
 
 ### Fixed
+- `xTwitter.ts`: Removed `'use node'` directive, split actions to `xTwitterActions.ts` (mutations cannot run in Node.js)
+- `voice/providers.ts`: Extracted handlers with explicit return types to break circular type references through `internal.voice`
+- `voice/providers.ts`: Fixed spread type errors (ternary instead of `&&` for conditional object spreads)
+- `chat.ts`: Added explicit type annotations to break circular type inference on `config`, `system`, `result`
+- `mcp/client.ts`: Fixed circular types with `as any` on function references and `Response` type on fetch
+- `mcp/server.ts`: Simplified httpAction helper signatures, added explicit type annotations
+- `mcp.ts`: Cast `skill` argument for `checkSecurity` to match expected `Doc` type
+- `agent/modelRouter.ts`: Fixed deep type instantiation on `internal.agentConfig.getConfig`
+- `agent/toolLoader.ts`: Fixed deep type instantiation on `api.mcpServers.getEnabledApproved`
+- `http.ts`: Fixed `threads.list` call to use `paginationOpts` instead of `limit`
+- `http.ts`: Fixed `threads.create` call to use `title` instead of non-existent `metadata`
+- `apiKeys.ts`: Fixed readonly array assignment by spreading into mutable arrays
+- `mcpServers.ts`: Added `getByIdInternal` as `internalQuery` for secure internal access
+- `threads.ts`: Added `create` internal mutation with correct `createThread` return type handling
+- Added `returns` validators to all functions missing them across `xTwitter.ts`, `voice/providers.ts`, `mcp/client.ts`, `mcp.ts`
+- Added `return null` to handlers with `returns: v.null()` in `xTwitter.ts`
 - `agentMail.ts`: `api.activityLog.log` changed to `internal.activityLog.log` (was runtime crash)
 - `xTwitter.ts`: `getConfigInternal` changed from `query` to `internalQuery` (was runtime crash)
 - `execute.ts`: string function reference replaced with `internal.skillSecrets.getBySkill` (was runtime crash)

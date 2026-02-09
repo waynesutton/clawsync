@@ -19,12 +19,16 @@ export const executeTool = internalAction({
     input: v.optional(v.any()),
     apiKeyId: v.optional(v.id('apiKeys')),
   },
+  returns: v.object({
+    output: v.any(),
+    error: v.union(v.string(), v.null()),
+  }),
   handler: async (ctx, args) => {
     const startTime = Date.now();
 
     // Find the skill by name
-    const skills = await ctx.runQuery(internal.skillRegistry.getActiveApproved);
-    const skill = skills.find((s) => s.name === args.toolName);
+    const skills: Array<{ name: string; description: string; skillType: string; config?: string; templateId?: string; _id: any }> = await ctx.runQuery(internal.skillRegistry.getActiveApproved);
+    const skill = skills.find((s: { name: string }) => s.name === args.toolName);
 
     if (!skill) {
       return {
@@ -33,10 +37,10 @@ export const executeTool = internalAction({
       };
     }
 
-    // Run security check
+    // Run security check (cast skill to expected Doc type)
     const securityResult = await checkSecurity(
       ctx as unknown as ActionCtx,
-      skill,
+      skill as any,
       args.input
     );
 
@@ -199,6 +203,12 @@ async function executeCodeSkill(
 // List available MCP resources
 export const listResources = internalAction({
   args: {},
+  returns: v.array(v.object({
+    uri: v.string(),
+    name: v.string(),
+    description: v.string(),
+    mimeType: v.optional(v.string()),
+  })),
   handler: async (ctx) => {
     // Get knowledge bases or other resources
     // For now, return empty list - can be extended to include:
@@ -232,6 +242,7 @@ export const readResource = internalAction({
   args: {
     uri: v.string(),
   },
+  returns: v.any(),
   handler: async (ctx, args) => {
     // Parse URI and fetch resource
     const uri = args.uri;

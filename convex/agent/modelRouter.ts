@@ -37,7 +37,14 @@ export interface ResolvedModel {
  */
 export async function resolveModel(ctx: ActionCtx): Promise<ResolvedModel> {
   // Get config from Convex
-  const config = await ctx.runQuery(internal.agentConfig.getConfig);
+  const config: {
+    modelProvider: string;
+    model: string;
+    fallbackProvider?: string;
+    fallbackModel?: string;
+  } | null =
+    // @ts-expect-error Deep type instantiation in generated API types
+    await ctx.runQuery(internal.agentConfig.getConfig);
 
   if (!config) {
     // Default to Claude Sonnet if no config

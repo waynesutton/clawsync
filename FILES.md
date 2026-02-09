@@ -25,7 +25,8 @@ Brief descriptions of key files in the ClawSync codebase.
 | `crons.ts` | Background jobs (summaries, health checks, cleanup) |
 | `setup.ts` | Seed data and first-run configuration |
 | `syncboardAuth.ts` | SyncBoard password authentication |
-| `xTwitter.ts` | X/Twitter API v2 integration |
+| `xTwitter.ts` | X/Twitter queries, mutations, internal functions (V8 runtime) |
+| `xTwitterActions.ts` | X/Twitter actions: postTweet, fetchMentions, readTweet (Node.js runtime) |
 | `agentMail.ts` | AgentMail email integration |
 | `auth.config.ts` | Auth configuration (empty providers placeholder) |
 | `messages.ts` | Streaming message subscription with `listMessages` + `syncStreams` |
@@ -36,14 +37,14 @@ Brief descriptions of key files in the ClawSync codebase.
 |------|-------------|
 | `clawsync.ts` | Agent definition with `languageModel` API and `createDynamicAgent` factory |
 | `security.ts` | Security checker (runs on every tool invocation) |
-| `toolLoader.ts` | Assembles tools from skills + MCP servers using `createTool` and `jsonSchema` |
-| `modelRouter.ts` | Resolves provider + model from agentConfig (supports anthropic, openai, xai, openrouter) |
+| `toolLoader.ts` | Assembles tools from skills + MCP servers using `createTool` and `jsonSchema` (type-safe API refs) |
+| `modelRouter.ts` | Resolves provider + model from agentConfig (supports anthropic, openai, xai, openrouter, custom) |
 
 ### convex/voice/
 
 | File | Description |
 |------|-------------|
-| `providers.ts` | Voice TTS/STT actions (ElevenLabs, OpenAI) |
+| `providers.ts` | Voice TTS/STT actions with extracted handlers for type safety (ElevenLabs, Personaplex) |
 | `queries.ts` | Voice provider queries, session mutations (split from providers for `'use node'`) |
 
 ### convex/lib/

@@ -41,6 +41,9 @@ lerna-debug.log*
 # Testing
 coverage/
 
+# Deployment docs (contains deployment-specific URLs)
+docs/deployment-commands.md
+
 # Misc
 *.log
 *.sw?

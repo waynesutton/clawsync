@@ -154,7 +154,9 @@ http.route({
     const url = new URL(request.url);
     const limit = parseInt(url.searchParams.get('limit') ?? '20');
 
-    const threads = await ctx.runQuery(internal.threads.list, { limit });
+    const threads = await ctx.runQuery(internal.threads.list, {
+      paginationOpts: { cursor: null, numItems: limit },
+    });
 
     return jsonResponse({ threads }, 200, cors);
   }),
@@ -205,9 +207,9 @@ http.route({
       return errorResponse(auth.error!, auth.statusCode, cors);
     }
 
-    const body = await request.json().catch(() => ({}));
+    const body: { title?: string } = await request.json().catch(() => ({}));
     const thread = await ctx.runMutation(internal.threads.create, {
-      metadata: body.metadata,
+      title: body.title,
     });
 
     return jsonResponse({ threadId: thread.threadId }, 201, cors);
@@ -237,7 +239,7 @@ http.route({
     const skills = await ctx.runQuery(internal.skillRegistry.getActiveApproved);
 
     // Return public info only
-    const publicSkills = skills.map((s) => ({
+    const publicSkills = skills.map((s: { name: string; description: string; skillType: string; supportsImages?: boolean; supportsStreaming?: boolean }) => ({
       name: s.name,
       description: s.description,
       skillType: s.skillType,
@@ -352,7 +354,7 @@ http.route({
     // Get active skills as MCP tools
     const skills = await ctx.runQuery(internal.skillRegistry.getActiveApproved);
 
-    const tools = skills.map((skill) => {
+    const tools = skills.map((skill: { name: string; description: string; config?: string }) => {
       // Parse config for input schema
       let inputSchema = {};
       try {

@@ -1,0 +1,1165 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ClawSync Features - Open Source AI Agent Platform</title>
+    <meta
+      name="description"
+      content="ClawSync is an open source AI agent platform with chat UI, skills system, MCP support, and multi-model routing."
+    />
+    <meta name="theme-color" content="#f3f3f3" />
+    <link rel="icon" type="image/png" href="public/favicon.png" />
+    <link
+      rel="alternate icon"
+      type="image/png"
+      href="public/clawsync-favicon.png"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/geist@1.3.1/dist/fonts/geist-sans/style.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/geist@1.3.1/dist/fonts/geist-mono/style.min.css"
+    />
+    <style>
+      :root {
+        --bg-primary: #f3f3f3;
+        --bg-secondary: #ececec;
+        --bg-hover: #dbdbdb;
+        --text-primary: #232323;
+        --text-secondary: #6a6a6a;
+        --border: #c7c6c5;
+        --interactive: #ea5b26;
+        --interactive-hover: #d24714;
+        --success: #22c55e;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family:
+          "Geist",
+          system-ui,
+          -apple-system,
+          sans-serif;
+        background: var(--bg-primary);
+        color: var(--text-primary);
+        line-height: 1.6;
+      }
+
+      a {
+        color: var(--interactive);
+        text-decoration: none;
+      }
+
+      a:hover {
+        color: var(--interactive-hover);
+      }
+
+      .container {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 0 24px;
+      }
+
+      /* Header */
+      header {
+        padding: 20px 0;
+        border-bottom: 1px solid var(--border);
+        position: sticky;
+        top: 0;
+        background: var(--bg-primary);
+        z-index: 100;
+      }
+
+      .header-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .logo {
+        display: flex;
+        align-items: center;
+      }
+
+      .logo-img {
+        height: 54px;
+        width: auto;
+      }
+
+      .header-links {
+        display: flex;
+        gap: 24px;
+        align-items: center;
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 20px;
+        border-radius: 8px;
+        font-weight: 500;
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+
+      .btn-primary {
+        background: var(--interactive);
+        color: white;
+      }
+
+      .btn-primary:hover {
+        background: var(--interactive-hover);
+        color: white;
+      }
+
+      .btn-secondary {
+        background: var(--bg-secondary);
+        color: var(--text-primary);
+        border: 1px solid var(--border);
+      }
+
+      .btn-secondary:hover {
+        background: var(--bg-hover);
+      }
+
+      /* Hero */
+      .hero {
+        padding: 80px 0;
+        text-align: center;
+      }
+
+      .hero h1 {
+        font-size: 3.5rem;
+        font-weight: 700;
+        margin-bottom: 24px;
+        line-height: 1.1;
+      }
+
+      .hero h1 span {
+        color: var(--interactive);
+      }
+
+      .hero-logo {
+        height: 80px;
+        width: auto;
+        margin-bottom: 24px;
+      }
+
+      .hero p {
+        font-size: 1rem;
+        color: var(--text-secondary);
+        max-width: 540px;
+        margin: 0 auto 32px;
+      }
+
+      .hero-buttons {
+        display: flex;
+        gap: 16px;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+
+      .tech-stack {
+        display: flex;
+        gap: 12px;
+        justify-content: center;
+        margin-top: 40px;
+        flex-wrap: wrap;
+      }
+
+      .tech-badge {
+        padding: 6px 16px;
+        background: var(--bg-secondary);
+        border-radius: 999px;
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+      }
+
+      /* Challenge Section */
+      .challenge {
+        padding: 60px 0;
+        background: var(--text-primary);
+        color: var(--bg-primary);
+      }
+
+      .challenge-content {
+        max-width: 800px;
+        margin: 0 auto;
+        text-align: center;
+      }
+
+      .challenge-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 16px;
+        background: var(--interactive);
+        color: white;
+        border-radius: 999px;
+        font-size: 0.875rem;
+        font-weight: 600;
+        margin-bottom: 24px;
+      }
+
+      .challenge h2 {
+        font-size: 2rem;
+        margin-bottom: 16px;
+      }
+
+      .challenge-description {
+        font-size: 1.125rem;
+        color: #a0a0a0;
+        margin-bottom: 32px;
+        line-height: 1.7;
+      }
+
+      .challenge-prizes {
+        display: flex;
+        justify-content: center;
+        gap: 32px;
+        flex-wrap: wrap;
+        margin-bottom: 32px;
+      }
+
+      .prize-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 16px 24px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+      }
+
+      .prize-item svg {
+        width: 24px;
+        height: 24px;
+        color: var(--interactive);
+      }
+
+      .prize-item span {
+        font-weight: 500;
+      }
+
+      .challenge-rules {
+        text-align: left;
+        background: rgba(255, 255, 255, 0.03);
+        border-radius: 12px;
+        padding: 24px;
+        margin-bottom: 32px;
+      }
+
+      .challenge-rules h4 {
+        font-size: 0.875rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #a0a0a0;
+        margin-bottom: 16px;
+      }
+
+      .challenge-rules ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+
+      .challenge-rules li {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        margin-bottom: 12px;
+        font-size: 0.9375rem;
+      }
+
+      .challenge-rules li:last-child {
+        margin-bottom: 0;
+      }
+
+      .challenge-rules li svg {
+        width: 20px;
+        height: 20px;
+        color: var(--success);
+        flex-shrink: 0;
+        margin-top: 2px;
+      }
+
+      .challenge-cta {
+        font-size: 0.875rem;
+        color: #a0a0a0;
+      }
+
+      .challenge-cta a {
+        color: var(--interactive);
+      }
+
+      /* Features Grid */
+      .features {
+        padding: 80px 0;
+        background: var(--bg-secondary);
+      }
+
+      .section-title {
+        text-align: center;
+        font-size: 2.5rem;
+        margin-bottom: 48px;
+      }
+
+      .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 24px;
+      }
+
+      .feature-card {
+        background: var(--bg-primary);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 32px;
+      }
+
+      .feature-icon {
+        width: 48px;
+        height: 48px;
+        margin-bottom: 16px;
+        color: var(--interactive);
+      }
+
+      .feature-card h3 {
+        font-size: 1.25rem;
+        margin-bottom: 8px;
+      }
+
+      .feature-card p {
+        color: var(--text-secondary);
+        margin: 0;
+      }
+
+      /* Integrations */
+      .integrations {
+        padding: 80px 0;
+      }
+
+      .integrations-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+        justify-content: center;
+        max-width: 800px;
+        margin: 0 auto;
+      }
+
+      .integration-badge {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 20px;
+        background: var(--bg-secondary);
+        border-radius: 12px;
+        font-size: 0.875rem;
+        font-weight: 500;
+      }
+
+      .integration-badge svg {
+        width: 20px;
+        height: 20px;
+        color: var(--text-secondary);
+      }
+
+      /* Deployment */
+      .deployment {
+        padding: 80px 0;
+        background: var(--bg-secondary);
+      }
+
+      .deployment-content {
+        max-width: 700px;
+        margin: 0 auto;
+      }
+
+      .code-block {
+        background: var(--text-primary);
+        color: var(--bg-primary);
+        padding: 20px 24px;
+        border-radius: 12px;
+        font-family: "Geist Mono", monospace;
+        font-size: 0.875rem;
+        overflow-x: auto;
+        margin: 16px 0;
+      }
+
+      .code-block .comment {
+        color: #6a6a6a;
+      }
+
+      /* CTA */
+      .cta {
+        padding: 80px 0;
+        text-align: center;
+      }
+
+      .cta h2 {
+        font-size: 2.5rem;
+        margin-bottom: 16px;
+      }
+
+      .cta p {
+        color: var(--text-secondary);
+        margin-bottom: 32px;
+        font-size: 1.125rem;
+      }
+
+      /* Footer */
+      footer {
+        padding: 40px 0;
+        border-top: 1px solid var(--border);
+        text-align: center;
+      }
+
+      .footer-links {
+        display: flex;
+        gap: 32px;
+        justify-content: center;
+        margin-bottom: 24px;
+        flex-wrap: wrap;
+      }
+
+      .footer-bottom {
+        color: var(--text-secondary);
+        font-size: 0.875rem;
+      }
+
+      /* Responsive */
+      @media (max-width: 768px) {
+        .hero-logo {
+          height: 60px;
+        }
+
+        .hero h1 {
+          font-size: 2.5rem;
+        }
+
+        .features-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .challenge-prizes {
+          flex-direction: column;
+          align-items: center;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="container">
+        <div class="header-content">
+          <a href="https://github.com/waynesutton/clawsync" class="logo">
+            <img
+              src="public/clawsync-logo.svg"
+              alt="ClawSync"
+              class="logo-img"
+              onerror="
+                this.onerror = null;
+                this.src = 'public/clawsync-logo.png';
+              "
+            />
+          </a>
+          <nav class="header-links">
+            <a href="docs.html">Docs</a>
+            <a
+              href="https://github.com/waynesutton/clawsync"
+              class="btn btn-secondary"
+            >
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
+                <path
+                  d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"
+                />
+              </svg>
+              GitHub
+            </a>
+          </nav>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <!-- Hero -->
+      <section class="hero">
+        <div class="container">
+          <img
+            src="public/clawsync-logo.svg"
+            alt="ClawSync"
+            class="hero-logo"
+            onerror="
+              this.onerror = null;
+              this.src = 'public/clawsync-logo.png';
+            "
+          />
+          <h1>Your AI agent,<br /><span>open source</span></h1>
+          <p>
+            Deploy a personal AI agent with chat UI, skills system, MCP support,
+            and multi-model routing. Built on Convex. Ready to fork.
+          </p>
+          <div class="hero-buttons">
+            <a
+              href="https://github.com/waynesutton/clawsync"
+              class="btn btn-primary"
+            >
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
+                <path
+                  d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"
+                />
+              </svg>
+              View on GitHub
+            </a>
+            <a href="docs.html" class="btn btn-secondary">Read the Docs</a>
+          </div>
+          <div class="tech-stack">
+            <span class="tech-badge">React + TypeScript</span>
+            <span class="tech-badge">Convex</span>
+            <span class="tech-badge">WorkOS Auth</span>
+            <span class="tech-badge">Multi-Model</span>
+            <span class="tech-badge">Geist Fonts</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Challenge -->
+      <section class="challenge">
+        <div class="container">
+          <div class="challenge-content">
+            <div class="challenge-badge">
+              <!-- Phosphor Trophy icon -->
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                fill="currentColor"
+                viewBox="0 0 256 256"
+              >
+                <path
+                  d="M232,64H208V48a8,8,0,0,0-8-8H56a8,8,0,0,0-8,8V64H24A16,16,0,0,0,8,80V96a40,40,0,0,0,40,40h3.65A80.13,80.13,0,0,0,120,191.61V216H96a8,8,0,0,0,0,16h64a8,8,0,0,0,0-16H136V191.58A80.14,80.14,0,0,0,204.37,136H208a40,40,0,0,0,40-40V80A16,16,0,0,0,232,64ZM48,120A24,24,0,0,1,24,96V80H48v32q0,4,.39,8Zm144-8a64,64,0,0,1-128,0V56H192Zm40-16a24,24,0,0,1-24,24h-.39q.39-4,.39-8V80h24Z"
+                />
+              </svg>
+              ClawSync Challenge
+            </div>
+            <h2>Win $500 + Swag + Credits</h2>
+            <p class="challenge-description">
+              Be one of the first three to deploy ClawSync and show it off. Post
+              a live demo on X (Twitter) demonstrating at least three agent
+              features and you could win.
+            </p>
+
+            <div class="challenge-prizes">
+              <div class="prize-item">
+                <!-- Phosphor CurrencyDollar icon -->
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  fill="currentColor"
+                  viewBox="0 0 256 256"
+                >
+                  <path
+                    d="M152,120H136V56h8a32,32,0,0,1,32,32,8,8,0,0,0,16,0,48.05,48.05,0,0,0-48-48h-8V24a8,8,0,0,0-16,0V40h-8a48,48,0,0,0,0,96h8v64H104a32,32,0,0,1-32-32,8,8,0,0,0-16,0,48.05,48.05,0,0,0,48,48h16v16a8,8,0,0,0,16,0V216h16a48,48,0,0,0,0-96Zm-40,0a32,32,0,0,1,0-64h8v64Zm40,80H136V136h16a32,32,0,0,1,0,64Z"
+                  />
+                </svg>
+                <span>$500 Cash/Gift Card</span>
+              </div>
+              <div class="prize-item">
+                <!-- Phosphor TShirt icon -->
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  fill="currentColor"
+                  viewBox="0 0 256 256"
+                >
+                  <path
+                    d="M247.59,61.22,195.83,33A8,8,0,0,0,192,32H160a8,8,0,0,0-8,8,24,24,0,0,1-48,0,8,8,0,0,0-8-8H64a8,8,0,0,0-3.84,1L8.41,61.22A15.76,15.76,0,0,0,1.82,82.48l19.27,36.81A16.37,16.37,0,0,0,35.67,128H56v80a16,16,0,0,0,16,16H184a16,16,0,0,0,16-16V128h20.34a16.37,16.37,0,0,0,14.58-8.71l19.27-36.81A15.76,15.76,0,0,0,247.59,61.22ZM35.67,112a.62.62,0,0,1-.41-.13L16.09,75.26,56,53.48V112ZM184,208H72V48h17.2a40,40,0,0,0,77.6,0H184Zm36.75-96.14a.55.55,0,0,1-.41.14H200V53.48l39.92,21.78Z"
+                  />
+                </svg>
+                <span> Swag</span>
+              </div>
+              <div class="prize-item">
+                <!-- Phosphor CreditCard icon -->
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  fill="currentColor"
+                  viewBox="0 0 256 256"
+                >
+                  <path
+                    d="M224,48H32A16,16,0,0,0,16,64V192a16,16,0,0,0,16,16H224a16,16,0,0,0,16-16V64A16,16,0,0,0,224,48Zm0,16V88H32V64Zm0,128H32V104H224v88Zm-16-24a8,8,0,0,1-8,8H168a8,8,0,0,1,0-16h32A8,8,0,0,1,208,168Zm-64,0a8,8,0,0,1-8,8H120a8,8,0,0,1,0-16h16A8,8,0,0,1,144,168Z"
+                  />
+                </svg>
+                <span>API Credits</span>
+              </div>
+            </div>
+
+            <div class="challenge-rules">
+              <h4>Requirements</h4>
+              <ul>
+                <li>
+                  <!-- Phosphor Check icon -->
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="20"
+                    height="20"
+                    fill="currentColor"
+                    viewBox="0 0 256 256"
+                  >
+                    <path
+                      d="M229.66,77.66l-128,128a8,8,0,0,1-11.32,0l-56-56a8,8,0,0,1,11.32-11.32L96,188.69,218.34,66.34a8,8,0,0,1,11.32,11.32Z"
+                    />
+                  </svg>
+                  Post a live demo video on X (Twitter) showing your deployed
+                  ClawSync agent
+                </li>
+                <li>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="20"
+                    height="20"
+                    fill="currentColor"
+                    viewBox="0 0 256 256"
+                  >
+                    <path
+                      d="M229.66,77.66l-128,128a8,8,0,0,1-11.32,0l-56-56a8,8,0,0,1,11.32-11.32L96,188.69,218.34,66.34a8,8,0,0,1,11.32,11.32Z"
+                    />
+                  </svg>
+                  Demonstrate at least 3 different agent features (chat, skills,
+                  MCP, channels, X integration, etc.)
+                </li>
+                <li>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="20"
+                    height="20"
+                    fill="currentColor"
+                    viewBox="0 0 256 256"
+                  >
+                    <path
+                      d="M229.66,77.66l-128,128a8,8,0,0,1-11.32,0l-56-56a8,8,0,0,1,11.32-11.32L96,188.69,218.34,66.34a8,8,0,0,1,11.32,11.32Z"
+                    />
+                  </svg>
+                  SyncBoard admin dashboard and Live Activity Feed do not count
+                  as features
+                </li>
+                <li>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="20"
+                    height="20"
+                    fill="currentColor"
+                    viewBox="0 0 256 256"
+                  >
+                    <path
+                      d="M229.66,77.66l-128,128a8,8,0,0,1-11.32,0l-56-56a8,8,0,0,1,11.32-11.32L96,188.69,218.34,66.34a8,8,0,0,1,11.32,11.32Z"
+                    />
+                  </svg>
+                  Tag <strong>@convex</strong> and use
+                  <strong> Claw Sync Challenge</strong> in your post
+                </li>
+                <li>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="20"
+                    height="20"
+                    fill="currentColor"
+                    viewBox="0 0 256 256"
+                  >
+                    <path
+                      d="M229.66,77.66l-128,128a8,8,0,0,1-11.32,0l-56-56a8,8,0,0,1,11.32-11.32L96,188.69,218.34,66.34a8,8,0,0,1,11.32,11.32Z"
+                    />
+                  </svg>
+                  First 3 valid submissions win - no time limit, but don't wait
+                  too long!
+                </li>
+              </ul>
+            </div>
+
+            <p class="challenge-cta">
+              Ready to build?
+              <a href="https://github.com/waynesutton/clawsync"
+                >Fork ClawSync on GitHub</a
+              >
+              and start your demo.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Features -->
+      <section class="features">
+        <div class="container">
+          <h2 class="section-title">Everything you need</h2>
+          <div class="features-grid">
+            <div class="feature-card">
+              <!-- Phosphor ChatCircle icon -->
+              <svg
+                class="feature-icon"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="currentColor"
+                viewBox="0 0 256 256"
+              >
+                <path
+                  d="M128,24A104,104,0,0,0,36.18,176.88L24.83,210.93a16,16,0,0,0,20.24,20.24l34.05-11.35A104,104,0,1,0,128,24Zm0,192a87.87,87.87,0,0,1-44.06-11.81,8,8,0,0,0-6.54-.67L40,216,52.47,178.6a8,8,0,0,0-.66-6.54A88,88,0,1,1,128,216Z"
+                />
+              </svg>
+              <h3>Public Chat UI</h3>
+              <p>
+                Clean, real-time chat interface with streaming responses,
+                markdown rendering, and responsive design.
+              </p>
+            </div>
+            <div class="feature-card">
+              <!-- Phosphor Lightning icon -->
+              <svg
+                class="feature-icon"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="currentColor"
+                viewBox="0 0 256 256"
+              >
+                <path
+                  d="M215.79,118.17a8,8,0,0,0-5-5.66L153.18,90.9l14.66-73.33a8,8,0,0,0-13.69-7l-112,120a8,8,0,0,0,3,13l57.63,21.61L88.16,238.43a8,8,0,0,0,13.69,7l112-120A8,8,0,0,0,215.79,118.17ZM109.37,214l10.47-52.38a8,8,0,0,0-5-9.06L62,132.71l84.62-90.66L136.16,94.43a8,8,0,0,0,5,9.06l52.8,19.8Z"
+                />
+              </svg>
+              <h3>Skills System</h3>
+              <p>
+                Template skills, webhook skills, or TypeScript code skills.
+                Extend your agent with any capability.
+              </p>
+            </div>
+            <div class="feature-card">
+              <!-- Phosphor Lock icon -->
+              <svg
+                class="feature-icon"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="currentColor"
+                viewBox="0 0 256 256"
+              >
+                <path
+                  d="M208,80H176V56a48,48,0,0,0-96,0V80H48A16,16,0,0,0,32,96V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V96A16,16,0,0,0,208,80ZM96,56a32,32,0,0,1,64,0V80H96ZM208,208H48V96H208V208Zm-80-48a16,16,0,1,1,16-16A16,16,0,0,1,128,160Z"
+                />
+              </svg>
+              <h3>SyncBoard Admin</h3>
+              <p>
+                Private dashboard to configure your agent, manage skills, view
+                activity, and control settings.
+              </p>
+            </div>
+            <div class="feature-card">
+              <!-- Phosphor Robot icon -->
+              <svg
+                class="feature-icon"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="currentColor"
+                viewBox="0 0 256 256"
+              >
+                <path
+                  d="M200,48H136V16a8,8,0,0,0-16,0V48H56A32,32,0,0,0,24,80V192a32,32,0,0,0,32,32H200a32,32,0,0,0,32-32V80A32,32,0,0,0,200,48Zm16,144a16,16,0,0,1-16,16H56a16,16,0,0,1-16-16V80A16,16,0,0,1,56,64H200a16,16,0,0,1,16,16Zm-52-56a12,12,0,1,1-12-12A12,12,0,0,1,164,136Zm-60,0a12,12,0,1,1-12-12A12,12,0,0,1,104,136Zm-8,36a8,8,0,0,0,8,8h48a8,8,0,0,0,0-16H104A8,8,0,0,0,96,172Z"
+                />
+              </svg>
+              <h3>Multi-Model Support</h3>
+              <p>
+                Claude, GPT, Grok, Gemini, or any OpenRouter model. Switch
+                providers without code changes.
+              </p>
+            </div>
+            <div class="feature-card">
+              <!-- Phosphor Plug icon -->
+              <svg
+                class="feature-icon"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="currentColor"
+                viewBox="0 0 256 256"
+              >
+                <path
+                  d="M224,56H176V16a8,8,0,0,0-16,0V56H96V16a8,8,0,0,0-16,0V56H32a8,8,0,0,0,0,16H48v48a88.1,88.1,0,0,0,72,86.52V240a8,8,0,0,0,16,0V206.52A88.1,88.1,0,0,0,208,120V72h16a8,8,0,0,0,0-16ZM192,120a72,72,0,0,1-144,0V72H192Z"
+                />
+              </svg>
+              <h3>MCP Support</h3>
+              <p>
+                Connect to external MCP servers or expose your agent as an MCP
+                server for other tools.
+              </p>
+            </div>
+            <div class="feature-card">
+              <!-- Phosphor DeviceMobile icon -->
+              <svg
+                class="feature-icon"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="currentColor"
+                viewBox="0 0 256 256"
+              >
+                <path
+                  d="M176,16H80A24,24,0,0,0,56,40V216a24,24,0,0,0,24,24h96a24,24,0,0,0,24-24V40A24,24,0,0,0,176,16Zm8,200a8,8,0,0,1-8,8H80a8,8,0,0,1-8-8V40a8,8,0,0,1,8-8h96a8,8,0,0,1,8,8ZM140,60a12,12,0,1,1-12-12A12,12,0,0,1,140,60Z"
+                />
+              </svg>
+              <h3>Channel Integrations</h3>
+              <p>
+                Telegram, Discord, WhatsApp, Slack, Email. One agent brain, many
+                communication channels.
+              </p>
+            </div>
+            <div class="feature-card">
+              <!-- Phosphor XLogo icon -->
+              <svg
+                class="feature-icon"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="currentColor"
+                viewBox="0 0 256 256"
+              >
+                <path
+                  d="M214.75,211.71l-62.6-98.38,61.77-67.95a8,8,0,0,0-11.84-10.76L143.24,99.34,102.75,35.71A8,8,0,0,0,96,32H48a8,8,0,0,0-6.75,12.29l62.6,98.38L41.08,210.62a8,8,0,1,0,11.84,10.76l58.84-64.72,40.49,63.63A8,8,0,0,0,160,224h48a8,8,0,0,0,6.75-12.29ZM164.39,208,62.57,48h29l101.86,160Z"
+                />
+              </svg>
+              <h3>X (Twitter) Integration</h3>
+              <p>
+                Read tweets, reply to mentions, post updates. Display agent
+                tweets on your landing page.
+              </p>
+            </div>
+            <div class="feature-card">
+              <!-- Phosphor ChartLine icon -->
+              <svg
+                class="feature-icon"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="currentColor"
+                viewBox="0 0 256 256"
+              >
+                <path
+                  d="M232,208a8,8,0,0,1-8,8H32a8,8,0,0,1-8-8V48a8,8,0,0,1,16,0V156.69l50.34-50.35a8,8,0,0,1,11.32,0L128,132.69,180.69,80H160a8,8,0,0,1,0-16h40a8,8,0,0,1,8,8v40a8,8,0,0,1-16,0V91.31l-58.34,58.35a8,8,0,0,1-11.32,0L96,123.31,40,179.31V200H224A8,8,0,0,1,232,208Z"
+                />
+              </svg>
+              <h3>Live Activity Feed</h3>
+              <p>
+                Public real-time log of agent actions. Control visibility per
+                entry from SyncBoard.
+              </p>
+            </div>
+            <div class="feature-card">
+              <!-- Phosphor EnvelopeSimple icon -->
+              <svg
+                class="feature-icon"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="currentColor"
+                viewBox="0 0 256 256"
+              >
+                <path
+                  d="M224,48H32a8,8,0,0,0-8,8V192a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V56A8,8,0,0,0,224,48ZM203.43,64,128,133.15,52.57,64ZM216,192H40V74.19l82.59,75.71a8,8,0,0,0,10.82,0L216,74.19V192Z"
+                />
+              </svg>
+              <h3>AgentMail</h3>
+              <p>
+                Email inboxes for your agent. Send, receive, and process emails
+                via API with rate limits.
+              </p>
+            </div>
+            <!-- Self-Hosted feature card commented out
+            <div class="feature-card">
+              <svg class="feature-icon" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 256 256">
+                <path d="M152,224a8,8,0,0,1-8,8H112a8,8,0,0,1,0-16h32A8,8,0,0,1,152,224Zm-24-112a12,12,0,1,0-12-12A12,12,0,0,0,128,112Zm95.62,43.83-12.36,55.63a16,16,0,0,1-25.51,9.11L158.51,200h-61L70.25,220.57a16,16,0,0,1-25.51-9.11L32.38,155.83a16.09,16.09,0,0,1,8.15-16.59l5.47-2.88V96a64,64,0,0,1,37.28-58.12A64.13,64.13,0,0,1,128,32a64.13,64.13,0,0,1,44.72,5.88A64,64,0,0,1,210,96v40.37l5.47,2.88A16.09,16.09,0,0,1,223.62,155.83ZM64,120H192V96a48,48,0,0,0-48-48h0a48,48,0,0,0-48,48v24Zm-9.3,74.84,12.36-55.63a16,16,0,0,0-8.15-16.59l-5.47-2.88,0,6.26ZM201,126l-5.47,2.88a16.09,16.09,0,0,0-8.15,16.59l12.36,55.63Z"/>
+              </svg>
+              <h3>Self-Hosted</h3>
+              <p>Convex Self Static Hosting. Deploy from your repo.</p>
+            </div>
+            -->
+          </div>
+        </div>
+      </section>
+
+      <!-- Integrations -->
+      <section class="integrations">
+        <div class="container">
+          <h2 class="section-title">Model Providers</h2>
+          <div class="integrations-grid">
+            <div class="integration-badge">
+              <!-- Anthropic A -->
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
+                <path
+                  d="M17.604 3.6L12 20.4 6.396 3.6h3.396l2.208 7.512L14.208 3.6h3.396z"
+                />
+              </svg>
+              Anthropic (Claude)
+            </div>
+            <div class="integration-badge">
+              <!-- Phosphor Brain icon -->
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                fill="currentColor"
+                viewBox="0 0 256 256"
+              >
+                <path
+                  d="M248,124a56.11,56.11,0,0,0-32-50.61V72a48,48,0,0,0-88-26.49A48,48,0,0,0,40,72v1.39a56,56,0,0,0,0,101.2V176a48,48,0,0,0,88,26.49A48,48,0,0,0,216,176v-1.41A56.09,56.09,0,0,0,248,124ZM88,208a32,32,0,0,1-31.81-28.56A55.87,55.87,0,0,0,64,180h8a8,8,0,0,0,0-16H64A40,40,0,0,1,50.67,86.27,8,8,0,0,0,56,78.73V72a32,32,0,0,1,64,0v68.26A47.8,47.8,0,0,0,88,128a8,8,0,0,0,0,16,32,32,0,0,1,0,64Zm104-44h-8a8,8,0,0,0,0,16h8a55.87,55.87,0,0,0,7.81-.56A32,32,0,1,1,168,144a8,8,0,0,0,0-16,47.8,47.8,0,0,0-32,12.26V72a32,32,0,0,1,64,0v6.73a8,8,0,0,0,5.33,7.54A40,40,0,0,1,192,164Z"
+                />
+              </svg>
+              OpenAI (GPT)
+            </div>
+            <div class="integration-badge">
+              <!-- X logo -->
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                fill="currentColor"
+                viewBox="0 0 256 256"
+              >
+                <path
+                  d="M214.75,211.71l-62.6-98.38,61.77-67.95a8,8,0,0,0-11.84-10.76L143.24,99.34,102.75,35.71A8,8,0,0,0,96,32H48a8,8,0,0,0-6.75,12.29l62.6,98.38L41.08,210.62a8,8,0,1,0,11.84,10.76l58.84-64.72,40.49,63.63A8,8,0,0,0,160,224h48a8,8,0,0,0,6.75-12.29ZM164.39,208,62.57,48h29l101.86,160Z"
+                />
+              </svg>
+              xAI (Grok)
+            </div>
+            <div class="integration-badge">
+              <!-- Phosphor Globe icon -->
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                fill="currentColor"
+                viewBox="0 0 256 256"
+              >
+                <path
+                  d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm88,104a87.62,87.62,0,0,1-6.4,32.94l-44.7-27.49a15.92,15.92,0,0,0-6.24-2.23l-22.82-3.08a16.11,16.11,0,0,0-16,7.86h-8.72l-3.8-7.86a15.91,15.91,0,0,0-11-8.67l-8-1.73L96.14,104h16.71a16.06,16.06,0,0,0,7.73-2l12.25-6.76a16.62,16.62,0,0,0,3-2.14l26.91-24.34A15.93,15.93,0,0,0,166,58.76l-.22-.6A88,88,0,0,1,216,128Z"
+                />
+              </svg>
+              OpenRouter (300+ models)
+            </div>
+            <div class="integration-badge">
+              <!-- Phosphor Gear icon -->
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                fill="currentColor"
+                viewBox="0 0 256 256"
+              >
+                <path
+                  d="M128,80a48,48,0,1,0,48,48A48.05,48.05,0,0,0,128,80Zm0,80a32,32,0,1,1,32-32A32,32,0,0,1,128,160Zm88-29.84q.06-2.16,0-4.32l14.92-18.64a8,8,0,0,0,1.48-7.06,107.21,107.21,0,0,0-10.88-26.25,8,8,0,0,0-6-3.93l-23.72-2.64q-1.48-1.56-3-3L186,40.54a8,8,0,0,0-3.94-6,107.71,107.71,0,0,0-26.25-10.87,8,8,0,0,0-7.06,1.49L130.16,40Q128,40,125.84,40L107.2,25.11a8,8,0,0,0-7.06-1.48A107.6,107.6,0,0,0,73.89,34.51a8,8,0,0,0-3.93,6L67.32,64.27q-1.56,1.49-3,3L40.54,70a8,8,0,0,0-6,3.94,107.71,107.71,0,0,0-10.87,26.25,8,8,0,0,0,1.49,7.06L40,125.84Q40,128,40,130.16L25.11,148.8a8,8,0,0,0-1.48,7.06,107.21,107.21,0,0,0,10.88,26.25,8,8,0,0,0,6,3.93l23.72,2.64q1.49,1.56,3,3L70,215.46a8,8,0,0,0,3.94,6,107.71,107.71,0,0,0,26.25,10.87,8,8,0,0,0,7.06-1.49L125.84,216q2.16.06,4.32,0l18.64,14.92a8,8,0,0,0,7.06,1.48,107.21,107.21,0,0,0,26.25-10.88,8,8,0,0,0,3.93-6l2.64-23.72q1.56-1.48,3-3L215.46,186a8,8,0,0,0,6-3.94,107.71,107.71,0,0,0,10.87-26.25,8,8,0,0,0-1.49-7.06Z"
+                />
+              </svg>
+              Custom Providers
+            </div>
+          </div>
+
+          <h2 class="section-title" style="margin-top: 64px">Channels</h2>
+          <div class="integrations-grid">
+            <div class="integration-badge">
+              <!-- Phosphor PaperPlaneTilt -->
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                fill="currentColor"
+                viewBox="0 0 256 256"
+              >
+                <path
+                  d="M227.32,28.68a16,16,0,0,0-15.66-4.08l-.15,0L19.57,82.84a16,16,0,0,0-2.42,29.84l85.62,40.55,40.55,85.62A15.86,15.86,0,0,0,157.74,248h.27a15.88,15.88,0,0,0,14.42-9.6l58-191.94v-.15A16,16,0,0,0,227.32,28.68Z"
+                />
+              </svg>
+              Telegram
+            </div>
+            <div class="integration-badge">
+              <!-- Phosphor GameController -->
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                fill="currentColor"
+                viewBox="0 0 256 256"
+              >
+                <path
+                  d="M176,112H152a8,8,0,0,0,0,16h24a8,8,0,0,0,0-16ZM104,96a8,8,0,0,0-8,8v8H88a8,8,0,0,0,0,16h8v8a8,8,0,0,0,16,0v-8h8a8,8,0,0,0,0-16h-8v-8A8,8,0,0,0,104,96Z"
+                />
+              </svg>
+              Discord
+            </div>
+            <div class="integration-badge">
+              <!-- Phosphor ChatCircle -->
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                fill="currentColor"
+                viewBox="0 0 256 256"
+              >
+                <path
+                  d="M128,24A104,104,0,0,0,36.18,176.88L24.83,210.93a16,16,0,0,0,20.24,20.24l34.05-11.35A104,104,0,1,0,128,24Z"
+                />
+              </svg>
+              WhatsApp
+            </div>
+            <div class="integration-badge">
+              <!-- Phosphor Briefcase -->
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                fill="currentColor"
+                viewBox="0 0 256 256"
+              >
+                <path
+                  d="M216,56H176V48a24,24,0,0,0-24-24H104A24,24,0,0,0,80,48v8H40A16,16,0,0,0,24,72V200a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V72A16,16,0,0,0,216,56ZM96,48a8,8,0,0,1,8-8h48a8,8,0,0,1,8,8v8H96Z"
+                />
+              </svg>
+              Slack
+            </div>
+            <div class="integration-badge">
+              <!-- Phosphor Envelope -->
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                fill="currentColor"
+                viewBox="0 0 256 256"
+              >
+                <path
+                  d="M224,48H32a8,8,0,0,0-8,8V192a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V56A8,8,0,0,0,224,48Zm-96,85.15L52.57,64H203.43Z"
+                />
+              </svg>
+              Email
+            </div>
+            <div class="integration-badge">
+              <!-- X logo -->
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                fill="currentColor"
+                viewBox="0 0 256 256"
+              >
+                <path
+                  d="M214.75,211.71l-62.6-98.38,61.77-67.95a8,8,0,0,0-11.84-10.76L143.24,99.34,102.75,35.71A8,8,0,0,0,96,32H48a8,8,0,0,0-6.75,12.29l62.6,98.38L41.08,210.62a8,8,0,1,0,11.84,10.76l58.84-64.72,40.49,63.63A8,8,0,0,0,160,224h48a8,8,0,0,0,6.75-12.29Z"
+                />
+              </svg>
+              X (Twitter)
+            </div>
+            <div class="integration-badge">
+              <!-- Phosphor Plug -->
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                fill="currentColor"
+                viewBox="0 0 256 256"
+              >
+                <path
+                  d="M224,56H176V16a8,8,0,0,0-16,0V56H96V16a8,8,0,0,0-16,0V56H32a8,8,0,0,0,0,16H48v48a88.1,88.1,0,0,0,72,86.52V240a8,8,0,0,0,16,0V206.52A88.1,88.1,0,0,0,208,120V72h16a8,8,0,0,0,0-16Z"
+                />
+              </svg>
+              MCP Servers
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Deployment -->
+      <section class="deployment">
+        <div class="container">
+          <h2 class="section-title">Deploy in Minutes</h2>
+          <div class="deployment-content">
+            <div class="code-block">
+              <span class="comment"># Clone the repo</span><br />
+              git clone https://github.com/waynesutton/clawsync.git<br />
+              cd clawsync<br /><br />
+
+              <span class="comment"># Install dependencies</span><br />
+              npm install<br /><br />
+
+              <span class="comment"># Start Convex backend</span><br />
+              npx convex dev<br /><br />
+
+              <span class="comment"># Set your API key in Convex Dashboard</span
+              ><br />
+              <span class="comment"># ANTHROPIC_API_KEY=sk-ant-...</span
+              ><br /><br />
+
+              <span class="comment"># Start frontend (dev)</span><br />
+              npm run dev<br /><br />
+
+              <span class="comment"># Deploy to production</span><br />
+              npm run deploy
+            </div>
+            <p style="text-align: center; color: var(--text-secondary)">
+              Complete setup wizard at <code>/setup</code> on first run.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- CTA -->
+      <section class="cta">
+        <div class="container">
+          <h2>Ready to build your agent?</h2>
+          <p>
+            Fork the repo, configure your agent's identity, connect your APIs,
+            and deploy.
+          </p>
+          <div class="hero-buttons">
+            <a
+              href="https://github.com/waynesutton/clawsync"
+              class="btn btn-primary"
+            >
+              Get Started
+            </a>
+            <a href="docs.html" class="btn btn-secondary">Read the Docs</a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="container">
+        <div class="footer-links">
+          <a href="https://github.com/waynesutton/clawsync">GitHub</a>
+          <a href="docs.html">Documentation</a>
+          <a href="https://github.com/waynesutton/clawsync/issues">Issues</a>
+          <a href="https://convex.dev">Convex</a>
+          <a href="https://www.convex.dev/community">Convex Discord</a>
+          <a href="https://workos.com">WorkOS</a>
+        </div>
+        <div class="footer-bottom">
+          <p>MIT License. Fork it, own it.</p>
+          <p style="margin-top: 8px">
+            Built with <a href="https://convex.dev">Convex</a>,
+            <a href="https://workos.com">WorkOS</a>, and
+            <a href="https://vercel.com/font">Geist</a>.
+          </p>
+          <p style="margin-top: 8px">
+            Inspired by <a href="https://openclaw.ai/">OpenClaw.ai</a>
+          </p>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

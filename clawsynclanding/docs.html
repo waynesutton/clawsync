@@ -1,0 +1,1745 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ClawSync Documentation</title>
+  <meta name="description" content="Complete setup guide for ClawSync - open source AI agent platform">
+  <meta name="theme-color" content="#f3f3f3">
+  <link rel="icon" type="image/png" href="public/favicon.png">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/geist@1.3.1/dist/fonts/geist-sans/style.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/geist@1.3.1/dist/fonts/geist-mono/style.min.css">
+  <style>
+    :root {
+      --bg-primary: #f3f3f3;
+      --bg-secondary: #ececec;
+      --bg-hover: #dbdbdb;
+      --text-primary: #232323;
+      --text-secondary: #6a6a6a;
+      --border: #c7c6c5;
+      --accent: #93908f;
+      --interactive: #ea5b26;
+      --interactive-hover: #d24714;
+      --success: #22c55e;
+      --warning: #f59e0b;
+      --error: #ef4444;
+      --code-bg: #232323;
+      --code-text: #f3f3f3;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Geist', system-ui, -apple-system, sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.7;
+    }
+
+    a {
+      color: var(--interactive);
+      text-decoration: none;
+    }
+
+    a:hover {
+      color: var(--interactive-hover);
+    }
+
+    /* Layout */
+    .docs-layout {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 280px;
+      background: var(--bg-secondary);
+      border-right: 1px solid var(--border);
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      overflow-y: auto;
+      padding: 24px 0;
+    }
+
+    .sidebar-header {
+      padding: 0 24px 24px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 16px;
+    }
+
+    .sidebar-logo {
+      height: 32px;
+      width: auto;
+    }
+
+    .sidebar-nav {
+      padding: 0 12px;
+    }
+
+    .nav-section {
+      margin-bottom: 24px;
+    }
+
+    .nav-section-title {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-secondary);
+      padding: 0 12px;
+      margin-bottom: 8px;
+    }
+
+    .nav-link {
+      display: block;
+      padding: 8px 12px;
+      color: var(--text-primary);
+      border-radius: 6px;
+      font-size: 0.875rem;
+      transition: background 0.15s;
+    }
+
+    .nav-link:hover {
+      background: var(--bg-hover);
+      color: var(--text-primary);
+    }
+
+    .nav-link.active {
+      background: var(--bg-primary);
+      color: var(--interactive);
+      font-weight: 500;
+    }
+
+    /* Main content */
+    .main-content {
+      flex: 1;
+      margin-left: 280px;
+      padding: 32px 48px;
+      max-width: 900px;
+    }
+
+    /* Header bar */
+    .doc-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 32px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .doc-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .doc-action-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 12px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .doc-action-btn:hover {
+      background: var(--bg-hover);
+      color: var(--text-primary);
+    }
+
+    .doc-action-btn svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    /* Typography */
+    h1 {
+      font-size: 2.25rem;
+      font-weight: 700;
+      margin-bottom: 16px;
+      line-height: 1.2;
+    }
+
+    h2 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin: 48px 0 16px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+    }
+
+    h2:first-of-type {
+      margin-top: 32px;
+      border-top: none;
+      padding-top: 0;
+    }
+
+    h3 {
+      font-size: 1.125rem;
+      font-weight: 600;
+      margin: 32px 0 12px;
+    }
+
+    p {
+      margin-bottom: 16px;
+    }
+
+    .lead {
+      font-size: 1.125rem;
+      color: var(--text-secondary);
+      margin-bottom: 32px;
+    }
+
+    /* Code blocks */
+    pre {
+      background: var(--code-bg);
+      color: var(--code-text);
+      padding: 16px 20px;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-family: 'Geist Mono', monospace;
+      font-size: 0.875rem;
+      margin: 16px 0 24px;
+      position: relative;
+    }
+
+    pre .comment {
+      color: #6a6a6a;
+    }
+
+    pre .string {
+      color: #a5d6ff;
+    }
+
+    pre .keyword {
+      color: #ff7b72;
+    }
+
+    code {
+      font-family: 'Geist Mono', monospace;
+      font-size: 0.875em;
+      background: var(--bg-secondary);
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    pre code {
+      background: none;
+      padding: 0;
+    }
+
+    .copy-btn {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      padding: 6px 10px;
+      background: rgba(255,255,255,0.1);
+      border: none;
+      border-radius: 4px;
+      color: #999;
+      font-size: 0.75rem;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .copy-btn:hover {
+      background: rgba(255,255,255,0.2);
+      color: #fff;
+    }
+
+    /* Lists */
+    ul, ol {
+      margin: 16px 0 24px 24px;
+    }
+
+    li {
+      margin-bottom: 8px;
+    }
+
+    /* Tables */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0 24px;
+      font-size: 0.875rem;
+    }
+
+    th, td {
+      padding: 12px 16px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+
+    th {
+      font-weight: 600;
+      background: var(--bg-secondary);
+    }
+
+    /* Callouts */
+    .callout {
+      padding: 16px 20px;
+      border-radius: 8px;
+      margin: 24px 0;
+      border-left: 4px solid;
+    }
+
+    .callout-info {
+      background: #eff6ff;
+      border-color: #3b82f6;
+    }
+
+    .callout-warning {
+      background: #fffbeb;
+      border-color: var(--warning);
+    }
+
+    .callout-danger {
+      background: #fef2f2;
+      border-color: var(--error);
+    }
+
+    .callout-success {
+      background: #f0fdf4;
+      border-color: var(--success);
+    }
+
+    .callout-title {
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .callout p:last-child {
+      margin-bottom: 0;
+    }
+
+    /* Section */
+    .doc-section {
+      margin-bottom: 48px;
+    }
+
+    /* Cards */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+      margin: 24px 0;
+    }
+
+    .card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+    }
+
+    .card h4 {
+      font-size: 1rem;
+      margin-bottom: 8px;
+    }
+
+    .card p {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      margin: 0;
+    }
+
+    /* Steps */
+    .steps {
+      counter-reset: step;
+      margin: 24px 0;
+    }
+
+    .step {
+      position: relative;
+      padding-left: 48px;
+      padding-bottom: 32px;
+      border-left: 2px solid var(--border);
+      margin-left: 16px;
+    }
+
+    .step:last-child {
+      border-left: none;
+      padding-bottom: 0;
+    }
+
+    .step::before {
+      counter-increment: step;
+      content: counter(step);
+      position: absolute;
+      left: -17px;
+      top: 0;
+      width: 32px;
+      height: 32px;
+      background: var(--interactive);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 0.875rem;
+    }
+
+    .step h4 {
+      font-size: 1rem;
+      margin-bottom: 8px;
+    }
+
+    .step p {
+      margin-bottom: 12px;
+    }
+
+    /* Badges */
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      background: var(--bg-secondary);
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
+
+    .badge-required {
+      background: #fef2f2;
+      color: var(--error);
+    }
+
+    .badge-optional {
+      background: #eff6ff;
+      color: #3b82f6;
+    }
+
+    /* Mobile */
+    @media (max-width: 900px) {
+      .sidebar {
+        display: none;
+      }
+
+      .main-content {
+        margin-left: 0;
+        padding: 24px;
+      }
+    }
+
+    /* Modal */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal {
+      background: var(--bg-primary);
+      border-radius: 12px;
+      max-width: 800px;
+      max-height: 80vh;
+      width: 90%;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .modal-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-header h3 {
+      margin: 0;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: var(--text-secondary);
+    }
+
+    .modal-body {
+      padding: 20px;
+      overflow-y: auto;
+    }
+
+    .modal-body pre {
+      margin: 0;
+      max-height: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="docs-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <a href="features.html">
+          <img src="public/clawsync-logo.svg" alt="ClawSync" class="sidebar-logo" onerror="this.src='public/clawsync-logo.png'">
+        </a>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div class="nav-section">
+          <div class="nav-section-title">Getting Started</div>
+          <a href="#introduction" class="nav-link active">Introduction</a>
+          <a href="#quickstart" class="nav-link">Quickstart</a>
+          <a href="#project-structure" class="nav-link">Project Structure</a>
+        </div>
+
+        <div class="nav-section">
+          <div class="nav-section-title">Backend</div>
+          <a href="#convex-setup" class="nav-link">Convex Setup</a>
+          <a href="#environment-variables" class="nav-link">Environment Variables</a>
+          <a href="#database-schema" class="nav-link">Database Schema</a>
+        </div>
+
+        <div class="nav-section">
+          <div class="nav-section-title">AI Configuration</div>
+          <a href="#model-providers" class="nav-link">Model Providers</a>
+          <a href="#agent-configuration" class="nav-link">Agent Configuration</a>
+          <a href="#soul-document" class="nav-link">Soul Document</a>
+        </div>
+
+        <div class="nav-section">
+          <div class="nav-section-title">Features</div>
+          <a href="#skills-system" class="nav-link">Skills System</a>
+          <a href="#mcp-servers" class="nav-link">MCP Servers</a>
+          <a href="#channels" class="nav-link">Channel Integrations</a>
+          <a href="#x-twitter" class="nav-link">X/Twitter</a>
+          <a href="#agentmail" class="nav-link">AgentMail</a>
+        </div>
+
+        <div class="nav-section">
+          <div class="nav-section-title">Admin</div>
+          <a href="#syncboard" class="nav-link">SyncBoard Dashboard</a>
+          <a href="#authentication" class="nav-link">Authentication</a>
+          <a href="#api-keys" class="nav-link">API Keys</a>
+        </div>
+
+        <div class="nav-section">
+          <div class="nav-section-title">Deployment</div>
+          <a href="#self-hosting" class="nav-link">Deployment</a>
+          <a href="#production" class="nav-link">Production Checklist</a>
+        </div>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <div class="doc-header">
+        <div>
+          <span style="font-size: 0.75rem; color: var(--text-secondary);">Documentation</span>
+        </div>
+        <div class="doc-actions">
+          <button class="doc-action-btn" onclick="viewMarkdown()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="16" y1="13" x2="8" y2="13"></line>
+              <line x1="16" y1="17" x2="8" y2="17"></line>
+              <polyline points="10 9 9 9 8 9"></polyline>
+            </svg>
+            View as Markdown
+          </button>
+          <button class="doc-action-btn" onclick="copyMarkdown()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+            </svg>
+            Copy Markdown
+          </button>
+        </div>
+      </div>
+
+      <!-- Introduction -->
+      <section id="introduction" class="doc-section">
+        <h1>ClawSync Documentation</h1>
+        <p class="lead">
+          Complete setup guide for ClawSync, an open source AI agent platform with chat UI, skills system, MCP support, and multi-model routing.
+        </p>
+
+        <div class="card-grid">
+          <div class="card">
+            <h4>Real-time Chat</h4>
+            <p>Streaming responses with markdown rendering and conversation history.</p>
+          </div>
+          <div class="card">
+            <h4>Multi-Model</h4>
+            <p>Claude, GPT, Grok, Gemini, or any OpenRouter model.</p>
+          </div>
+          <div class="card">
+            <h4>Skills System</h4>
+            <p>Template, webhook, or code-based skills with security controls.</p>
+          </div>
+          <div class="card">
+            <h4>SyncBoard Admin</h4>
+            <p>Private dashboard to configure everything about your agent.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Quickstart -->
+      <section id="quickstart" class="doc-section">
+        <h2>Quickstart</h2>
+        <p>Get ClawSync running locally in under 5 minutes.</p>
+
+        <div class="steps">
+          <div class="step">
+            <h4>Clone the repository</h4>
+            <pre><code>git clone https://github.com/waynesutton/clawsync.git
+cd clawsync</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+          </div>
+
+          <div class="step">
+            <h4>Install dependencies</h4>
+            <pre><code>npm install</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+          </div>
+
+          <div class="step">
+            <h4>Start Convex backend</h4>
+            <p>This creates your Convex project and starts the dev server.</p>
+            <pre><code>npx convex dev</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+          </div>
+
+          <div class="step">
+            <h4>Set your API key</h4>
+            <p>In the Convex dashboard, add your AI provider API key:</p>
+            <pre><code><span class="comment"># For Claude (recommended)</span>
+ANTHROPIC_API_KEY=sk-ant-...
+
+<span class="comment"># For GPT</span>
+OPENAI_API_KEY=sk-...
+
+<span class="comment"># For Grok</span>
+XAI_API_KEY=xai-...</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+          </div>
+
+          <div class="step">
+            <h4>Start frontend</h4>
+            <pre><code>npm run dev</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+          </div>
+
+          <div class="step">
+            <h4>Complete setup wizard</h4>
+            <p>Open <code>http://localhost:5173/setup</code> and configure your agent's name, personality, and model.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Project Structure -->
+      <section id="project-structure" class="doc-section">
+        <h2>Project Structure</h2>
+        <pre><code>clawsync/
+├── convex/                 <span class="comment"># Backend (Convex functions)</span>
+│   ├── agent/              <span class="comment"># AI agent core</span>
+│   │   ├── clawsync.ts     <span class="comment"># Agent definition</span>
+│   │   ├── security.ts     <span class="comment"># Security checker</span>
+│   │   ├── toolLoader.ts   <span class="comment"># Dynamic tool loading</span>
+│   │   └── modelRouter.ts  <span class="comment"># Model resolution</span>
+│   ├── lib/                <span class="comment"># Shared utilities</span>
+│   ├── schema.ts           <span class="comment"># Database schema</span>
+│   ├── http.ts             <span class="comment"># HTTP endpoints</span>
+│   └── setup.ts            <span class="comment"># Seed data</span>
+├── src/                    <span class="comment"># Frontend (React)</span>
+│   ├── pages/              <span class="comment"># Page components</span>
+│   ├── components/         <span class="comment"># Reusable components</span>
+│   ├── styles/             <span class="comment"># CSS tokens and globals</span>
+│   ├── hooks/              <span class="comment"># React hooks</span>
+│   └── lib/                <span class="comment"># Utilities</span>
+├── content/                <span class="comment"># Content files</span>
+│   └── soul.md             <span class="comment"># Default agent personality</span>
+└── public/                 <span class="comment"># Static assets</span></code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+      </section>
+
+      <!-- Convex Setup -->
+      <section id="convex-setup" class="doc-section">
+        <h2>Convex Setup</h2>
+        <p>ClawSync uses <a href="https://convex.dev" target="_blank">Convex</a> as its backend. Convex provides real-time database, serverless functions, and file storage.</p>
+
+        <h3>Creating a Convex Project</h3>
+        <p>When you run <code>npx convex dev</code> for the first time:</p>
+        <ol>
+          <li>You'll be prompted to log in or create a Convex account</li>
+          <li>Choose "Create a new project" when asked</li>
+          <li>The Convex CLI will generate your project and deployment URL</li>
+        </ol>
+
+        <h3>Convex Dashboard</h3>
+        <p>Access your Convex dashboard at <a href="https://dashboard.convex.dev" target="_blank">dashboard.convex.dev</a> to:</p>
+        <ul>
+          <li>View and edit data in your tables</li>
+          <li>Set environment variables</li>
+          <li>View function logs</li>
+          <li>Monitor usage and performance</li>
+        </ul>
+
+        <h3>Components</h3>
+        <p>ClawSync uses these Convex components (configured in <code>convex/convex.config.ts</code>):</p>
+        <table>
+          <thead>
+            <tr>
+              <th>Component</th>
+              <th>Purpose</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>@convex-dev/agent</code></td>
+              <td>AI agent framework with tool calling</td>
+            </tr>
+            <tr>
+              <td><code>@convex-dev/rate-limiter</code></td>
+              <td>Rate limiting for API calls</td>
+            </tr>
+            <tr>
+              <td><code>@convex-dev/action-cache</code></td>
+              <td>Caching for external API responses</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- Environment Variables -->
+      <section id="environment-variables" class="doc-section">
+        <h2>Environment Variables</h2>
+        <p>Set these in the Convex dashboard under Settings → Environment Variables.</p>
+
+        <h3>AI Provider Keys</h3>
+        <p>At least one is required:</p>
+        <table>
+          <thead>
+            <tr>
+              <th>Variable</th>
+              <th>Provider</th>
+              <th>Required</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>ANTHROPIC_API_KEY</code></td>
+              <td>Claude (Anthropic)</td>
+              <td><span class="badge badge-required">Required*</span></td>
+            </tr>
+            <tr>
+              <td><code>OPENAI_API_KEY</code></td>
+              <td>GPT (OpenAI)</td>
+              <td><span class="badge badge-optional">Optional</span></td>
+            </tr>
+            <tr>
+              <td><code>XAI_API_KEY</code></td>
+              <td>Grok (xAI)</td>
+              <td><span class="badge badge-optional">Optional</span></td>
+            </tr>
+            <tr>
+              <td><code>OPENROUTER_API_KEY</code></td>
+              <td>OpenRouter (300+ models)</td>
+              <td><span class="badge badge-optional">Optional</span></td>
+            </tr>
+          </tbody>
+        </table>
+        <p><small>*At least one AI provider key is required.</small></p>
+
+        <h3>SyncBoard Authentication</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Variable</th>
+              <th>Description</th>
+              <th>Required</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>SYNCBOARD_PASSWORD_HASH</code></td>
+              <td>SHA-256 hash of admin password</td>
+              <td><span class="badge badge-required">Required</span></td>
+            </tr>
+          </tbody>
+        </table>
+        <p>Generate a password hash:</p>
+        <pre><code>echo -n "your-password" | shasum -a 256</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+        <h3>X/Twitter Integration</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Variable</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>X_BEARER_TOKEN</code></td>
+              <td>For reading tweets (App-only auth)</td>
+            </tr>
+            <tr>
+              <td><code>X_API_KEY</code></td>
+              <td>OAuth 1.0a consumer key</td>
+            </tr>
+            <tr>
+              <td><code>X_API_SECRET</code></td>
+              <td>OAuth 1.0a consumer secret</td>
+            </tr>
+            <tr>
+              <td><code>X_ACCESS_TOKEN</code></td>
+              <td>User access token</td>
+            </tr>
+            <tr>
+              <td><code>X_ACCESS_SECRET</code></td>
+              <td>User access token secret</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>AgentMail</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Variable</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>AGENTMAIL_API_KEY</code></td>
+              <td>AgentMail API key from console.agentmail.to</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>WorkOS AuthKit (Optional)</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Variable</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>WORKOS_CLIENT_ID</code></td>
+              <td>WorkOS application client ID</td>
+            </tr>
+            <tr>
+              <td><code>WORKOS_API_KEY</code></td>
+              <td>WorkOS API key</td>
+            </tr>
+            <tr>
+              <td><code>WORKOS_REDIRECT_URI</code></td>
+              <td>OAuth callback URL</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- Database Schema -->
+      <section id="database-schema" class="doc-section">
+        <h2>Database Schema</h2>
+        <p>ClawSync's database tables (defined in <code>convex/schema.ts</code>):</p>
+
+        <h3>Core Tables</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Table</th>
+              <th>Purpose</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>agentConfig</code></td>
+              <td>Agent name, soul, model settings</td>
+            </tr>
+            <tr>
+              <td><code>threads</code></td>
+              <td>Conversation threads</td>
+            </tr>
+            <tr>
+              <td><code>messages</code></td>
+              <td>Chat messages within threads</td>
+            </tr>
+            <tr>
+              <td><code>activityLog</code></td>
+              <td>Agent action history</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>Skills & Tools</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Table</th>
+              <th>Purpose</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>skillRegistry</code></td>
+              <td>Registered skills with approval status</td>
+            </tr>
+            <tr>
+              <td><code>skillTemplates</code></td>
+              <td>Pre-built skill templates</td>
+            </tr>
+            <tr>
+              <td><code>skillInvocations</code></td>
+              <td>Skill execution history</td>
+            </tr>
+            <tr>
+              <td><code>mcpServers</code></td>
+              <td>Connected MCP servers</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>Channels</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Table</th>
+              <th>Purpose</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>channelConfig</code></td>
+              <td>Channel settings (Telegram, Discord, etc.)</td>
+            </tr>
+            <tr>
+              <td><code>xConfig</code></td>
+              <td>X/Twitter configuration</td>
+            </tr>
+            <tr>
+              <td><code>xTweets</code></td>
+              <td>Cached tweets</td>
+            </tr>
+            <tr>
+              <td><code>agentMailConfig</code></td>
+              <td>AgentMail settings</td>
+            </tr>
+            <tr>
+              <td><code>agentMailInboxes</code></td>
+              <td>Email inboxes</td>
+            </tr>
+            <tr>
+              <td><code>agentMailMessages</code></td>
+              <td>Email message log</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- Model Providers -->
+      <section id="model-providers" class="doc-section">
+        <h2>Model Providers</h2>
+        <p>ClawSync supports multiple AI model providers. Configure your preferred provider in the setup wizard or SyncBoard.</p>
+
+        <h3>Anthropic (Claude)</h3>
+        <p>Recommended for best agent capabilities.</p>
+        <table>
+          <thead>
+            <tr>
+              <th>Model</th>
+              <th>Best For</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>claude-sonnet-4-20250514</td>
+              <td>Best balance of speed and capability</td>
+            </tr>
+            <tr>
+              <td>claude-3-5-haiku-20241022</td>
+              <td>Fast responses, lower cost</td>
+            </tr>
+            <tr>
+              <td>claude-opus-4-20250514</td>
+              <td>Most capable, complex reasoning</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>OpenAI (GPT)</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Model</th>
+              <th>Best For</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>gpt-4o</td>
+              <td>Most capable GPT model</td>
+            </tr>
+            <tr>
+              <td>gpt-4o-mini</td>
+              <td>Fast and cost-effective</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>xAI (Grok)</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Model</th>
+              <th>Best For</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>grok-3</td>
+              <td>Most capable Grok model</td>
+            </tr>
+            <tr>
+              <td>grok-3-fast</td>
+              <td>Faster responses</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>OpenRouter</h3>
+        <p>Access 300+ models through a single API. Set <code>OPENROUTER_API_KEY</code> and use any model ID from <a href="https://openrouter.ai/models" target="_blank">openrouter.ai/models</a>.</p>
+      </section>
+
+      <!-- Agent Configuration -->
+      <section id="agent-configuration" class="doc-section">
+        <h2>Agent Configuration</h2>
+        <p>Configure your agent in SyncBoard → Overview or via the setup wizard.</p>
+
+        <h3>Settings</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Setting</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Name</td>
+              <td>Your agent's display name</td>
+            </tr>
+            <tr>
+              <td>Model Provider</td>
+              <td>Which AI provider to use</td>
+            </tr>
+            <tr>
+              <td>Model</td>
+              <td>Specific model within the provider</td>
+            </tr>
+            <tr>
+              <td>Temperature</td>
+              <td>Response creativity (0-1)</td>
+            </tr>
+            <tr>
+              <td>Max Tokens</td>
+              <td>Maximum response length</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- Soul Document -->
+      <section id="soul-document" class="doc-section">
+        <h2>Soul Document</h2>
+        <p>The soul document defines your agent's personality, knowledge, and behavior. Edit it in SyncBoard → Soul.</p>
+
+        <h3>Structure</h3>
+        <pre><code><span class="comment"># Agent Identity</span>
+You are [name], a [role description].
+
+<span class="comment"># Personality</span>
+- Trait 1
+- Trait 2
+- Communication style
+
+<span class="comment"># Knowledge Areas</span>
+- Domain expertise
+- Special capabilities
+
+<span class="comment"># Behavioral Guidelines</span>
+- How to handle specific situations
+- What to avoid</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+        <div class="callout callout-info">
+          <div class="callout-title">Tip</div>
+          <p>Write your soul document in natural language. The agent will incorporate this into its system prompt.</p>
+        </div>
+      </section>
+
+      <!-- Skills System -->
+      <section id="skills-system" class="doc-section">
+        <h2>Skills System</h2>
+        <p>Skills extend your agent's capabilities. Manage them in SyncBoard → Skills.</p>
+
+        <h3>Skill Types</h3>
+
+        <h4>Template Skills</h4>
+        <p>Pre-built skills from the template library. Select a template and customize parameters.</p>
+
+        <h4>Webhook Skills</h4>
+        <p>Call external APIs when the agent invokes the skill.</p>
+        <pre><code>{
+  "url": "https://api.example.com/action",
+  "method": "POST",
+  "headers": {
+    "Authorization": "Bearer {{secret:API_KEY}}"
+  }
+}</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+        <h4>Code Skills</h4>
+        <p>TypeScript functions that run in Convex. (Coming soon)</p>
+
+        <h3>Skill Approval</h3>
+        <p>All skills require admin approval before they can be used. This prevents unauthorized tool usage.</p>
+
+        <h3>Security Controls</h3>
+        <ul>
+          <li><strong>Rate limiting:</strong> Max invocations per minute</li>
+          <li><strong>Timeout:</strong> Maximum execution time</li>
+          <li><strong>Security check:</strong> Input validation before execution</li>
+        </ul>
+      </section>
+
+      <!-- MCP Servers -->
+      <section id="mcp-servers" class="doc-section">
+        <h2>MCP Servers</h2>
+        <p>Connect to external MCP (Model Context Protocol) servers to give your agent access to additional tools.</p>
+
+        <h3>Adding an MCP Server</h3>
+        <ol>
+          <li>Go to SyncBoard → MCP</li>
+          <li>Click "Add MCP Server"</li>
+          <li>Enter the server name and URL</li>
+          <li>Approve the server to enable its tools</li>
+        </ol>
+
+        <h3>Server Requirements</h3>
+        <ul>
+          <li>Must implement the MCP protocol</li>
+          <li>Must be accessible from your Convex backend</li>
+          <li>Tools are discovered automatically</li>
+        </ul>
+
+        <div class="callout callout-warning">
+          <div class="callout-title">Security Note</div>
+          <p>Only connect to trusted MCP servers. Malicious servers could expose sensitive data or execute harmful actions.</p>
+        </div>
+      </section>
+
+      <!-- Channels -->
+      <section id="channels" class="doc-section">
+        <h2>Channel Integrations</h2>
+        <p>Connect your agent to messaging platforms. Configure in SyncBoard → Channels.</p>
+
+        <h3>Supported Channels</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Channel</th>
+              <th>Status</th>
+              <th>Requirements</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Telegram</td>
+              <td>Webhook ready</td>
+              <td>Bot token from @BotFather</td>
+            </tr>
+            <tr>
+              <td>Discord</td>
+              <td>Webhook ready</td>
+              <td>Bot application with message intents</td>
+            </tr>
+            <tr>
+              <td>WhatsApp</td>
+              <td>Webhook ready</td>
+              <td>Twilio WhatsApp API</td>
+            </tr>
+            <tr>
+              <td>Slack</td>
+              <td>Webhook ready</td>
+              <td>Slack app with Events API</td>
+            </tr>
+            <tr>
+              <td>Email</td>
+              <td>Webhook ready</td>
+              <td>Resend or similar provider</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>Webhook Setup</h3>
+        <p>Each channel sends webhooks to your Convex HTTP endpoint:</p>
+        <pre><code>https://your-deployment.convex.site/webhook/telegram
+https://your-deployment.convex.site/webhook/discord
+https://your-deployment.convex.site/webhook/whatsapp
+https://your-deployment.convex.site/webhook/slack
+https://your-deployment.convex.site/webhook/email</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+      </section>
+
+      <!-- X/Twitter -->
+      <section id="x-twitter" class="doc-section">
+        <h2>X/Twitter Integration</h2>
+        <p>Connect your agent to X (Twitter) to read tweets, reply to mentions, and post updates.</p>
+
+        <h3>Setup</h3>
+        <ol>
+          <li>Create a developer account at <a href="https://developer.twitter.com" target="_blank">developer.twitter.com</a></li>
+          <li>Create a project and app with Read and Write permissions</li>
+          <li>Generate OAuth 1.0a credentials</li>
+          <li>Set environment variables (see Environment Variables section)</li>
+          <li>Enable features in SyncBoard → X</li>
+        </ol>
+
+        <h3>Features</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Feature</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Auto-reply</td>
+              <td>Agent responds to @mentions automatically</td>
+            </tr>
+            <tr>
+              <td>Post from agent</td>
+              <td>Agent can post original tweets</td>
+            </tr>
+            <tr>
+              <td>Show on landing</td>
+              <td>Display tweets on public landing page</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- AgentMail -->
+      <section id="agentmail" class="doc-section">
+        <h2>AgentMail Integration</h2>
+        <p>AgentMail provides email inboxes for your AI agent. Send, receive, and process emails programmatically.</p>
+
+        <h3>Setup</h3>
+        <ol>
+          <li>Get an API key from <a href="https://console.agentmail.to" target="_blank">console.agentmail.to</a></li>
+          <li>Set <code>AGENTMAIL_API_KEY</code> in your Convex environment variables</li>
+          <li>Enable AgentMail in SyncBoard → AgentMail</li>
+          <li>Create your first inbox</li>
+        </ol>
+
+        <h3>Features</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Feature</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Multiple inboxes</td>
+              <td>Create and manage multiple email addresses</td>
+            </tr>
+            <tr>
+              <td>Send emails</td>
+              <td>Agent can send emails on your behalf</td>
+            </tr>
+            <tr>
+              <td>Receive emails</td>
+              <td>Incoming emails forwarded to agent</td>
+            </tr>
+            <tr>
+              <td>Auto-reply</td>
+              <td>Agent automatically responds to emails</td>
+            </tr>
+            <tr>
+              <td>Rate limiting</td>
+              <td>Configurable emails per hour</td>
+            </tr>
+            <tr>
+              <td>MCP tools</td>
+              <td>Email tools available via MCP</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>Environment Variable</h3>
+        <pre><code>AGENTMAIL_API_KEY=your-api-key-here</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+      </section>
+
+      <!-- SyncBoard -->
+      <section id="syncboard" class="doc-section">
+        <h2>SyncBoard Dashboard</h2>
+        <p>SyncBoard is your private admin dashboard for managing all aspects of your agent.</p>
+
+        <h3>Sections</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Section</th>
+              <th>Purpose</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Overview</td>
+              <td>Agent stats, quick actions</td>
+            </tr>
+            <tr>
+              <td>Soul</td>
+              <td>Edit agent personality</td>
+            </tr>
+            <tr>
+              <td>Models</td>
+              <td>Configure AI model</td>
+            </tr>
+            <tr>
+              <td>Skills</td>
+              <td>Manage and approve skills</td>
+            </tr>
+            <tr>
+              <td>MCP</td>
+              <td>Connect MCP servers</td>
+            </tr>
+            <tr>
+              <td>Channels</td>
+              <td>Configure messaging platforms</td>
+            </tr>
+            <tr>
+              <td>X</td>
+              <td>Twitter integration</td>
+            </tr>
+            <tr>
+              <td>AgentMail</td>
+              <td>Email inbox management</td>
+            </tr>
+            <tr>
+              <td>Threads</td>
+              <td>View conversation history</td>
+            </tr>
+            <tr>
+              <td>Activity</td>
+              <td>Agent action log</td>
+            </tr>
+            <tr>
+              <td>API</td>
+              <td>Manage API keys</td>
+            </tr>
+            <tr>
+              <td>Config</td>
+              <td>General settings</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- Authentication -->
+      <section id="authentication" class="doc-section">
+        <h2>Authentication</h2>
+
+        <h3>SyncBoard Password Auth</h3>
+        <p>Basic password protection for the admin dashboard. Set <code>SYNCBOARD_PASSWORD_HASH</code> in your environment variables.</p>
+
+        <h3>WorkOS AuthKit (Optional)</h3>
+        <p>For enterprise SSO, ClawSync has placeholders for WorkOS AuthKit integration:</p>
+        <ol>
+          <li>Create a WorkOS account at <a href="https://workos.com" target="_blank">workos.com</a></li>
+          <li>Create an application and configure OAuth</li>
+          <li>Set the environment variables</li>
+          <li>Uncomment the AuthKit provider in <code>src/main.tsx</code></li>
+        </ol>
+
+        <div class="callout callout-info">
+          <div class="callout-title">Note</div>
+          <p>WorkOS integration requires additional code changes. See <code>convex/auth.config.ts</code> for the JWT validation skeleton.</p>
+        </div>
+      </section>
+
+      <!-- API Keys -->
+      <section id="api-keys" class="doc-section">
+        <h2>API Keys</h2>
+        <p>Generate API keys in SyncBoard → API to allow external applications to interact with your agent.</p>
+
+        <h3>API Endpoints</h3>
+        <pre><code><span class="comment"># Send a message</span>
+POST /api/chat
+{
+  "message": "Hello agent",
+  "threadId": "optional-thread-id"
+}
+
+<span class="comment"># Get thread messages</span>
+GET /api/threads/:threadId/messages
+
+<span class="comment"># Create new thread</span>
+POST /api/threads</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+        <h3>Authentication</h3>
+        <p>Include your API key in the Authorization header:</p>
+        <pre><code>Authorization: Bearer your-api-key</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+      </section>
+
+      <!-- Self Hosting -->
+      <section id="self-hosting" class="doc-section">
+        <h2>Deployment</h2>
+        <p>ClawSync uses Convex for hosting and deployment.</p>
+
+        <h3>Deployment Options</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Option</th>
+              <th>Best For</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Convex Storage</td>
+              <td>Simplest setup, development</td>
+            </tr>
+            <tr>
+              <td>Convex + Cloudflare CDN</td>
+              <td>Production with custom domains</td>
+            </tr>
+            <tr>
+              <td>Cloudflare Pages</td>
+              <td>Best performance</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>Deploy Commands</h3>
+        <pre><code><span class="comment"># Development</span>
+npm run dev
+
+<span class="comment"># Production (Convex Storage)</span>
+npm run deploy
+
+<span class="comment"># Production (Cloudflare)</span>
+npm run deploy:cf</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+      </section>
+
+      <!-- Production Checklist -->
+      <section id="production" class="doc-section">
+        <h2>Production Checklist</h2>
+
+        <div class="callout callout-warning">
+          <div class="callout-title">Before going live</div>
+          <p>Complete these steps to secure your deployment.</p>
+        </div>
+
+        <h3>Security</h3>
+        <ul>
+          <li>Set a strong <code>SYNCBOARD_PASSWORD_HASH</code></li>
+          <li>Enable rate limiting on all channels</li>
+          <li>Review and approve only trusted skills</li>
+          <li>Audit connected MCP servers</li>
+        </ul>
+
+        <h3>Configuration</h3>
+        <ul>
+          <li>Configure your AI provider API key</li>
+          <li>Set up your soul document</li>
+          <li>Test all enabled channels</li>
+          <li>Verify webhook endpoints are accessible</li>
+        </ul>
+
+        <h3>Monitoring</h3>
+        <ul>
+          <li>Check activity logs regularly in SyncBoard</li>
+          <li>Monitor Convex dashboard for errors</li>
+          <li>Set up alerts for failed skill invocations</li>
+        </ul>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- Markdown Modal -->
+  <div class="modal-overlay" id="markdownModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Documentation as Markdown</h3>
+        <button class="modal-close" onclick="closeModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <pre id="markdownContent"></pre>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Markdown content
+    const markdownContent = `# ClawSync Documentation
+
+Complete setup guide for ClawSync, an open source AI agent platform with chat UI, skills system, MCP support, and multi-model routing.
+
+## Quickstart
+
+\`\`\`bash
+# Clone the repository
+git clone https://github.com/waynesutton/clawsync.git
+cd clawsync
+
+# Install dependencies
+npm install
+
+# Start Convex backend
+npx convex dev
+
+# Set your API key in Convex dashboard
+# ANTHROPIC_API_KEY=sk-ant-...
+
+# Start frontend
+npm run dev
+
+# Complete setup wizard at http://localhost:5173/setup
+\`\`\`
+
+## Project Structure
+
+\`\`\`
+clawsync/
+├── convex/                 # Backend (Convex functions)
+│   ├── agent/              # AI agent core
+│   ├── lib/                # Shared utilities
+│   ├── schema.ts           # Database schema
+│   ├── http.ts             # HTTP endpoints
+│   └── setup.ts            # Seed data
+├── src/                    # Frontend (React)
+│   ├── pages/              # Page components
+│   ├── components/         # Reusable components
+│   ├── styles/             # CSS tokens and globals
+│   ├── hooks/              # React hooks
+│   └── lib/                # Utilities
+├── content/                # Content files
+│   └── soul.md             # Default agent personality
+└── public/                 # Static assets
+\`\`\`
+
+## Environment Variables
+
+Set these in the Convex dashboard under Settings → Environment Variables.
+
+### AI Provider Keys (at least one required)
+
+| Variable | Provider |
+|----------|----------|
+| \`ANTHROPIC_API_KEY\` | Claude (Anthropic) |
+| \`OPENAI_API_KEY\` | GPT (OpenAI) |
+| \`XAI_API_KEY\` | Grok (xAI) |
+| \`OPENROUTER_API_KEY\` | OpenRouter (300+ models) |
+
+### SyncBoard Authentication
+
+| Variable | Description |
+|----------|-------------|
+| \`SYNCBOARD_PASSWORD_HASH\` | SHA-256 hash of admin password |
+
+Generate a password hash:
+\`\`\`bash
+echo -n "your-password" | shasum -a 256
+\`\`\`
+
+### X/Twitter Integration
+
+| Variable | Description |
+|----------|-------------|
+| \`X_BEARER_TOKEN\` | For reading tweets (App-only auth) |
+| \`X_API_KEY\` | OAuth 1.0a consumer key |
+| \`X_API_SECRET\` | OAuth 1.0a consumer secret |
+| \`X_ACCESS_TOKEN\` | User access token |
+| \`X_ACCESS_SECRET\` | User access token secret |
+
+### AgentMail Integration
+
+| Variable | Description |
+|----------|-------------|
+| \`AGENTMAIL_API_KEY\` | API key from agentmail.to dashboard |
+
+## Model Providers
+
+### Anthropic (Claude) - Recommended
+
+| Model | Best For |
+|-------|----------|
+| claude-sonnet-4-20250514 | Best balance of speed and capability |
+| claude-3-5-haiku-20241022 | Fast responses, lower cost |
+| claude-opus-4-20250514 | Most capable, complex reasoning |
+
+### OpenAI (GPT)
+
+| Model | Best For |
+|-------|----------|
+| gpt-4o | Most capable GPT model |
+| gpt-4o-mini | Fast and cost-effective |
+
+### xAI (Grok)
+
+| Model | Best For |
+|-------|----------|
+| grok-3 | Most capable Grok model |
+| grok-3-fast | Faster responses |
+
+## Skills System
+
+Skills extend your agent's capabilities. Manage them in SyncBoard → Skills.
+
+### Skill Types
+
+- **Template Skills**: Pre-built skills from the template library
+- **Webhook Skills**: Call external APIs
+- **Code Skills**: TypeScript functions (coming soon)
+
+### Security Controls
+
+- Rate limiting: Max invocations per minute
+- Timeout: Maximum execution time
+- Security check: Input validation before execution
+
+## Channels
+
+| Channel | Requirements |
+|---------|-------------|
+| Telegram | Bot token from @BotFather |
+| Discord | Bot application with message intents |
+| WhatsApp | Twilio WhatsApp API |
+| Slack | Slack app with Events API |
+| Email | Resend or similar provider |
+
+## SyncBoard Dashboard
+
+| Section | Purpose |
+|---------|---------|
+| Overview | Agent stats, quick actions |
+| Soul | Edit agent personality |
+| Models | Configure AI model |
+| Skills | Manage and approve skills |
+| MCP | Connect MCP servers |
+| Channels | Configure messaging platforms |
+| X | Twitter integration |
+| AgentMail | Email inbox management |
+| Threads | View conversation history |
+| Activity | Agent action log |
+| API | Manage API keys |
+| Config | General settings |
+
+## Deployment
+
+\`\`\`bash
+# Development
+npm run dev
+
+# Production (Convex Storage)
+npm run deploy
+
+# Production (Cloudflare)
+npm run deploy:cf
+\`\`\`
+
+## Production Checklist
+
+### Security
+- Set a strong \`SYNCBOARD_PASSWORD_HASH\`
+- Enable rate limiting on all channels
+- Review and approve only trusted skills
+- Audit connected MCP servers
+
+### Configuration
+- Configure your AI provider API key
+- Set up your soul document
+- Test all enabled channels
+- Verify webhook endpoints are accessible
+
+---
+
+MIT License. Fork it, own it.
+`;
+
+    function copyCode(btn) {
+      const pre = btn.parentElement;
+      const code = pre.querySelector('code').innerText;
+      navigator.clipboard.writeText(code);
+      btn.textContent = 'Copied!';
+      setTimeout(() => btn.textContent = 'Copy', 2000);
+    }
+
+    function viewMarkdown() {
+      document.getElementById('markdownContent').textContent = markdownContent;
+      document.getElementById('markdownModal').classList.add('active');
+    }
+
+    function copyMarkdown() {
+      navigator.clipboard.writeText(markdownContent);
+      alert('Markdown copied to clipboard!');
+    }
+
+    function closeModal() {
+      document.getElementById('markdownModal').classList.remove('active');
+    }
+
+    // Close modal on overlay click
+    document.getElementById('markdownModal').addEventListener('click', function(e) {
+      if (e.target === this) closeModal();
+    });
+
+    // Active nav link
+    const navLinks = document.querySelectorAll('.nav-link');
+    const sections = document.querySelectorAll('.doc-section');
+
+    window.addEventListener('scroll', () => {
+      let current = '';
+      sections.forEach(section => {
+        const sectionTop = section.offsetTop;
+        if (scrollY >= sectionTop - 100) {
+          current = section.getAttribute('id');
+        }
+      });
+
+      navLinks.forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('href') === '#' + current) {
+          link.classList.add('active');
+        }
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,4 +1,4 @@
-import { query, internalQuery } from './_generated/server';
+import { query, internalQuery, internalMutation } from './_generated/server';
 import { v } from 'convex/values';
 import { components } from './_generated/api';
 import { listMessages } from '@convex-dev/agent';
@@ -128,5 +128,26 @@ export const getThreadMessages = query({
     } catch {
       return [];
     }
+  },
+});
+
+// Create a new thread (internal, for HTTP API)
+export const create = internalMutation({
+  args: {
+    title: v.optional(v.string()),
+  },
+  returns: v.object({
+    threadId: v.string(),
+  }),
+  handler: async (ctx, args) => {
+    // Create thread via the agent component
+    const thread = await ctx.runMutation(
+      components.agent.threads.createThread,
+      {
+        userId: 'api',
+        ...(args.title ? { title: args.title } : {}),
+      },
+    );
+    return { threadId: thread._id };
   },
 });

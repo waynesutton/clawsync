@@ -165,12 +165,12 @@ export const create = mutation({
     const keyHash = await hashApiKey(plainKey);
     const keyPrefix = plainKey.slice(0, 16); // e.g., "cs_agent_abc123"
 
-    // Default scopes based on key type
-    const defaultScopes = args.keyType === 'admin'
+    // Default scopes based on key type (spread to create mutable arrays)
+    const defaultScopes: Array<string> = args.keyType === 'admin'
       ? [...API_SCOPES.admin, ...API_SCOPES.agent, ...API_SCOPES.data]
       : args.keyType === 'agent'
-        ? API_SCOPES.agent
-        : API_SCOPES.data;
+        ? [...API_SCOPES.agent]
+        : [...API_SCOPES.data];
 
     const now = Date.now();
     const keyId = await ctx.db.insert('apiKeys', {

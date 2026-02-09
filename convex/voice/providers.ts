@@ -39,6 +39,68 @@ export interface SpeechToTextResult {
   }>;
 }
 
+// Provider shape from voiceProviders table
+type VoiceProvider = {
+  providerId: string;
+  enabled: boolean;
+  config: string;
+  apiKeyEnvVar: string;
+  supportsSTT: boolean;
+} | null;
+
+// TTS result shape
+type TTSResult = {
+  audio: ArrayBuffer;
+  format: string;
+  durationMs: number;
+  metadata?: unknown;
+};
+
+// Extracted handler with explicit return type to break circular type reference
+async function handleTextToSpeech(
+  ctx: any,
+  args: { text: string; providerId?: string; voiceId?: string; options?: unknown }
+): Promise<TTSResult> {
+  const provider: VoiceProvider = args.providerId
+    ? await ctx.runQuery(internal.voice.queries.getProvider as any, {
+        providerId: args.providerId,
+      })
+    : await ctx.runQuery(internal.voice.queries.getDefaultProvider as any);
+
+  if (!provider || !provider.enabled) {
+    throw new Error('No voice provider available');
+  }
+
+  const apiKey: string | undefined = process.env[provider.apiKeyEnvVar];
+  if (!apiKey) {
+    throw new Error(`Missing API key: ${provider.apiKeyEnvVar}`);
+  }
+
+  const config: Record<string, unknown> = provider.config ? JSON.parse(provider.config) : {};
+  const voiceId: string = args.voiceId ?? (config.defaultVoiceId as string);
+
+  switch (provider.providerId) {
+    case 'elevenlabs':
+      return await elevenLabsTTS({
+        text: args.text,
+        voiceId,
+        apiKey,
+        options: { ...config, ...(args.options as Record<string, unknown>) },
+      });
+
+    case 'personaplex':
+      return await personaplexTTS({
+        text: args.text,
+        voiceId,
+        apiKey,
+        options: { ...config, ...(args.options as Record<string, unknown>) },
+      });
+
+    default:
+      throw new Error(`Unknown provider: ${provider.providerId}`);
+  }
+}
+
 // Text-to-speech using configured provider
 export const textToSpeech = internalAction({
   args: {
@@ -47,49 +109,52 @@ export const textToSpeech = internalAction({
     voiceId: v.optional(v.string()),
     options: v.optional(v.any()),
   },
-  handler: async (ctx, args) => {
-    // Get provider config
-    const provider = args.providerId
-      ? await ctx.runQuery(internal.voice.queries.getProvider, {
-          providerId: args.providerId,
-        })
-      : await ctx.runQuery(internal.voice.queries.getDefaultProvider);
-
-    if (!provider || !provider.enabled) {
-      throw new Error('No voice provider available');
-    }
-
-    // Get API key from environment
-    const apiKey = process.env[provider.apiKeyEnvVar];
-    if (!apiKey) {
-      throw new Error(`Missing API key: ${provider.apiKeyEnvVar}`);
-    }
-
-    const config = provider.config ? JSON.parse(provider.config) : {};
-    const voiceId = args.voiceId ?? config.defaultVoiceId;
-
-    switch (provider.providerId) {
-      case 'elevenlabs':
-        return await elevenLabsTTS({
-          text: args.text,
-          voiceId,
-          apiKey,
-          options: { ...config, ...args.options },
-        });
-
-      case 'personaplex':
-        return await personaplexTTS({
-          text: args.text,
-          voiceId,
-          apiKey,
-          options: { ...config, ...args.options },
-        });
-
-      default:
-        throw new Error(`Unknown provider: ${provider.providerId}`);
-    }
-  },
+  returns: v.object({
+    audio: v.bytes(),
+    format: v.string(),
+    durationMs: v.number(),
+    metadata: v.optional(v.any()),
+  }),
+  handler: handleTextToSpeech,
 });
+
+// Extracted handler with explicit return type to break circular type reference
+async function handleSpeechToText(
+  ctx: any,
+  args: { audioUrl: string; providerId?: string; options?: unknown }
+): Promise<SpeechToTextResult> {
+  const provider: VoiceProvider = args.providerId
+    ? await ctx.runQuery(internal.voice.queries.getProvider as any, {
+        providerId: args.providerId,
+      })
+    : await ctx.runQuery(internal.voice.queries.getDefaultProvider as any);
+
+  if (!provider || !provider.enabled || !provider.supportsSTT) {
+    throw new Error('No STT provider available');
+  }
+
+  const apiKey: string | undefined = process.env[provider.apiKeyEnvVar];
+  if (!apiKey) {
+    throw new Error(`Missing API key: ${provider.apiKeyEnvVar}`);
+  }
+
+  const config: Record<string, unknown> = provider.config ? JSON.parse(provider.config) : {};
+
+  switch (provider.providerId) {
+    case 'elevenlabs':
+      throw new Error('ElevenLabs STT not implemented - use alternative provider');
+
+    case 'personaplex':
+      return await personaplexSTT({
+        audioUrl: args.audioUrl,
+        apiKey,
+        options: { ...config, ...(args.options as Record<string, unknown>) },
+      });
+
+    default:
+      throw new Error(`Unknown provider: ${provider.providerId}`);
+  }
+}
 
 // Speech-to-text using configured provider
 export const speechToText = internalAction({
@@ -98,40 +163,17 @@ export const speechToText = internalAction({
     providerId: v.optional(v.string()),
     options: v.optional(v.any()),
   },
-  handler: async (ctx, args) => {
-    const provider = args.providerId
-      ? await ctx.runQuery(internal.voice.queries.getProvider, {
-          providerId: args.providerId,
-        })
-      : await ctx.runQuery(internal.voice.queries.getDefaultProvider);
-
-    if (!provider || !provider.enabled || !provider.supportsSTT) {
-      throw new Error('No STT provider available');
-    }
-
-    const apiKey = process.env[provider.apiKeyEnvVar];
-    if (!apiKey) {
-      throw new Error(`Missing API key: ${provider.apiKeyEnvVar}`);
-    }
-
-    const config = provider.config ? JSON.parse(provider.config) : {};
-
-    switch (provider.providerId) {
-      case 'elevenlabs':
-        // ElevenLabs doesn't have native STT, could use Whisper or similar
-        throw new Error('ElevenLabs STT not implemented - use alternative provider');
-
-      case 'personaplex':
-        return await personaplexSTT({
-          audioUrl: args.audioUrl,
-          apiKey,
-          options: { ...config, ...args.options },
-        });
-
-      default:
-        throw new Error(`Unknown provider: ${provider.providerId}`);
-    }
-  },
+  returns: v.object({
+    text: v.string(),
+    confidence: v.number(),
+    words: v.optional(v.array(v.object({
+      word: v.string(),
+      start: v.number(),
+      end: v.number(),
+      confidence: v.number(),
+    }))),
+  }),
+  handler: handleSpeechToText,
 });
 
 // ============================================
@@ -225,8 +267,8 @@ async function personaplexTTS(config: {
       voice_id: voiceId,
       sample_rate: sampleRate,
       output_format: format,
-      ...(options.emotion && { emotion: options.emotion }),
-      ...(options.speed && { speed: options.speed }),
+      ...(options.emotion ? { emotion: options.emotion } : {}),
+      ...(options.speed ? { speed: options.speed } : {}),
     }),
   });
 

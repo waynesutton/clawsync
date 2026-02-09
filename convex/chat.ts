@@ -6,7 +6,6 @@ import { internal } from './_generated/api';
 import { clawsyncAgent, createDynamicAgent } from './agent/clawsync';
 import { rateLimiter } from './rateLimits';
 import { loadTools } from './agent/toolLoader';
-import { stepCountIs } from '@convex-dev/agent';
 
 /**
  * Chat Functions
@@ -81,8 +80,12 @@ export const send = action({
       }
 
       // Load soul document from config for system prompt
-      const config = await ctx.runQuery(internal.agentConfig.getConfig);
-      const system = config
+      // Break circular type with explicit annotation
+      const config: {
+        soulDocument?: string;
+        systemPrompt?: string;
+      } | null = await ctx.runQuery(internal.agentConfig.getConfig as any);
+      const system: string | undefined = config
         ? `${config.soulDocument}\n\n${config.systemPrompt}`
         : undefined;
 
@@ -91,12 +94,12 @@ export const send = action({
 
       // Generate response with tools and multi-step support
       const hasTools = Object.keys(tools).length > 0;
-      const result = await thread.generateText(
+      const result: { text: string; steps?: Array<unknown> } = await thread.generateText(
         {
           prompt: args.message,
           ...(system && { system }),
           ...(hasTools && { tools }),
-          ...(hasTools && { stopWhen: stepCountIs(5) }),
+          ...(hasTools && { maxSteps: 5 }),
         },
         {
           // Save all messages (including tool call steps) so the

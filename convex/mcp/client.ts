@@ -21,8 +21,10 @@ export const fetchTools = internalAction({
   args: {
     serverId: v.id('mcpServers'),
   },
+  returns: v.any(),
   handler: async (ctx, args) => {
-    const server = await ctx.runQuery(internal.mcpServers.getById, { id: args.serverId });
+    const server: { url?: string; approved: boolean; enabled: boolean } | null =
+      await ctx.runQuery(internal.mcpServers.getByIdInternal, { id: args.serverId });
 
     if (!server || !server.url) {
       throw new Error('Server not found or no URL configured');
@@ -39,7 +41,7 @@ export const fetchTools = internalAction({
         throw new Error(`Failed to fetch tools: ${response.status}`);
       }
 
-      const data = await response.json();
+      const data: { tools?: Array<unknown> } = await response.json();
       return data.tools || [];
     } catch (error) {
       console.error('MCP client error:', error);
@@ -55,8 +57,11 @@ export const callTool = internalAction({
     toolName: v.string(),
     toolArgs: v.any(),
   },
+  returns: v.any(),
   handler: async (ctx, args) => {
-    const server = await ctx.runQuery(internal.mcpServers.getById, { id: args.serverId });
+    // Break circular type with 'as any' on function reference
+    const server: { url?: string; approved: boolean; enabled: boolean } | null =
+      await ctx.runQuery(internal.mcpServers.getByIdInternal as any, { id: args.serverId });
 
     if (!server || !server.url) {
       throw new Error('Server not found or no URL configured');
@@ -71,7 +76,7 @@ export const callTool = internalAction({
     }
 
     try {
-      const response = await fetch(server.url, {
+      const response: Response = await fetch(server.url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -94,19 +99,3 @@ export const callTool = internalAction({
     }
   },
 });
-
-// Internal helper to get server by ID
-// This would normally be in mcpServers.ts but adding here for completeness
-declare module '../_generated/api' {
-  interface Internal {
-    mcpServers: {
-      getById: (args: { id: string }) => Promise<{
-        _id: string;
-        name: string;
-        url?: string;
-        approved: boolean;
-        enabled: boolean;
-      } | null>;
-    };
-  }
-}
