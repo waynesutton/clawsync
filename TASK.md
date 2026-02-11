@@ -315,6 +315,18 @@
 - [x] Convex codegen passes with 0 new errors
 - [x] TypeScript strict check passes (no new errors from multi-agent changes)
 
+### Documentation Updates (2026-02-10)
+
+- [x] Added Multi-Agent System section to clawsynclanding/dist/docs.html (sidebar nav, full section with controls table, shared souls, per-agent assignments, agent-to-agent interaction, activity feed, database tables, API, backward compat callout)
+- [x] Added Multi-Agent System section to root docs.html (identical changes)
+- [x] Updated SyncBoard sections table in both docs files with Agents, Souls, Agent Feed rows
+- [x] Updated Database Schema section in both docs files with Multi-Agent tables subsection
+- [x] Updated embedded markdown content in both docs files
+- [x] Verified features.html and clawsynclanding/dist/index.html are in sync (17 feature cards)
+- [x] Updated FILES.md with clawsynclanding/dist/ section
+- [x] Updated CHANGELOG.md with docs changes
+- [x] `npx tsc --noEmit` passes with zero errors
+
 ## In Progress
 
 _None currently_

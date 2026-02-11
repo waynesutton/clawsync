@@ -27,6 +27,11 @@ All notable changes to ClawSync are documented here.
 - SyncBoard sidebar navigation entries for Agents, Souls, and Agent Feed
 - App.tsx routes for `/syncboard/agents`, `/syncboard/agents/:id`, `/syncboard/souls`, `/syncboard/agent-feed`
 - Multi-Agent, Shared Soul Documents, and Agent Controls feature cards on features.html
+- Multi-agent documentation section in docs.html and clawsynclanding/dist/docs.html (sidebar nav, agent controls table, shared souls, per-agent assignments, agent-to-agent interaction, database tables, API endpoints, backward compatibility callout)
+- Updated SyncBoard sections table in docs with Agents, Souls, Agent Feed rows
+- Updated Database Schema section in docs with Multi-Agent tables subsection
+- Updated embedded markdown content in both docs files to match HTML additions
+- Verified features.html and clawsynclanding/dist/index.html feature cards are in sync (17 cards)
 - Media file manager (Convex native storage default, Cloudflare R2 optional) with upload, list, delete, and stats
 - Stagehand browser automation integration (extract, act, observe, agent) via @browserbasehq/convex-stagehand
 - Firecrawl web scraping integration with durable caching via convex-firecrawl-scrape

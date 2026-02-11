@@ -532,6 +532,7 @@
 
         <div class="nav-section">
           <div class="nav-section-title">Features</div>
+          <a href="#multi-agent" class="nav-link">Multi-Agent System</a>
           <a href="#skills-system" class="nav-link">Skills System</a>
           <a href="#mcp-servers" class="nav-link">MCP Servers</a>
           <a href="#channels" class="nav-link">Channel Integrations</a>
@@ -958,6 +959,38 @@ XAI_API_KEY=xai-...</code><button class="copy-btn" onclick="copyCode(this)">Copy
             </tr>
           </tbody>
         </table>
+
+        <h3>Multi-Agent</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Table</th>
+              <th>Purpose</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>agents</code></td>
+              <td>Agent configurations and status</td>
+            </tr>
+            <tr>
+              <td><code>souls</code></td>
+              <td>Shared soul documents</td>
+            </tr>
+            <tr>
+              <td><code>agentSkillAssignments</code></td>
+              <td>Per-agent skill assignments</td>
+            </tr>
+            <tr>
+              <td><code>agentMcpAssignments</code></td>
+              <td>Per-agent MCP server assignments</td>
+            </tr>
+            <tr>
+              <td><code>agentInteractions</code></td>
+              <td>Agent-to-agent communication log</td>
+            </tr>
+          </tbody>
+        </table>
       </section>
 
       <!-- Model Providers -->
@@ -1097,6 +1130,105 @@ You are [name], a [role description].
         <div class="callout callout-info">
           <div class="callout-title">Tip</div>
           <p>Write your soul document in natural language. The agent will incorporate this into its system prompt.</p>
+        </div>
+      </section>
+
+      <!-- Multi-Agent System -->
+      <section id="multi-agent" class="doc-section">
+        <h2>Multi-Agent System</h2>
+        <p>Run multiple agents simultaneously, each with independent configurations. Manage agents in SyncBoard > Agents.</p>
+
+        <h3>Creating agents</h3>
+        <p>Each agent has its own name, model, provider, soul, skills, and MCP server assignments. Create agents from SyncBoard > Agents or during the setup wizard (which creates your first default agent).</p>
+
+        <h3>Agent controls</h3>
+        <p>Each agent supports these operational modes:</p>
+        <table>
+          <thead>
+            <tr>
+              <th>Mode</th>
+              <th>Behavior</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Auto</td>
+              <td>Runs automatically, processes messages as they arrive</td>
+            </tr>
+            <tr>
+              <td>Paused</td>
+              <td>Stops processing until resumed</td>
+            </tr>
+            <tr>
+              <td>Single Task</td>
+              <td>Processes one message then pauses</td>
+            </tr>
+            <tr>
+              <td>Think to Continue</td>
+              <td>Pauses after each response for user confirmation</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>Shared soul documents</h3>
+        <p>Soul documents can be shared across agents. Create reusable souls in SyncBoard > Souls and assign them to one or many agents. Each agent can also have its own inline soul document.</p>
+
+        <h3>Per-agent assignments</h3>
+        <p>Each agent can have its own set of skills and MCP servers. Assign them in the Agent Detail page under the Skills and MCP tabs.</p>
+
+        <h3>Agent-to-agent interaction</h3>
+        <p>Agents can communicate with each other. When multiple agents are configured, each agent gets dynamically generated <code>ask_agent_*</code> tools that let it query other agents. Interactions are logged in the <code>agentInteractions</code> table.</p>
+
+        <h3>Agent activity feed</h3>
+        <p>View all agent activity in a unified feed at SyncBoard > Agent Feed, or filter by individual agent. Each activity log entry includes which agent performed the action.</p>
+
+        <h3>Database tables</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Table</th>
+              <th>Purpose</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>agents</code></td>
+              <td>Agent configurations (name, model, status, mode, soul reference)</td>
+            </tr>
+            <tr>
+              <td><code>souls</code></td>
+              <td>Reusable soul documents shared across agents</td>
+            </tr>
+            <tr>
+              <td><code>agentSkillAssignments</code></td>
+              <td>Per-agent skill assignments</td>
+            </tr>
+            <tr>
+              <td><code>agentMcpAssignments</code></td>
+              <td>Per-agent MCP server assignments</td>
+            </tr>
+            <tr>
+              <td><code>agentInteractions</code></td>
+              <td>Agent-to-agent communication log</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>API</h3>
+        <p>The HTTP API supports multi-agent:</p>
+        <pre><code><span class="comment"># List all agents</span>
+GET /api/v1/agents
+
+<span class="comment"># Chat with a specific agent</span>
+POST /api/v1/agent/chat
+{
+  "message": "Hello",
+  "agentId": "optional-agent-id"
+}</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+        <div class="callout callout-info">
+          <div class="callout-title">Backward compatible</div>
+          <p>All multi-agent features are optional. If you only have one agent, everything works exactly as before. Existing API calls without <code>agentId</code> use the default agent.</p>
         </div>
       </section>
 
@@ -1321,6 +1453,18 @@ https://your-deployment.convex.site/webhook/email</code><button class="copy-btn"
             <tr>
               <td>Overview</td>
               <td>Agent stats, quick actions</td>
+            </tr>
+            <tr>
+              <td>Agents</td>
+              <td>Create and manage multiple agents</td>
+            </tr>
+            <tr>
+              <td>Souls</td>
+              <td>Shared personality documents</td>
+            </tr>
+            <tr>
+              <td>Agent Feed</td>
+              <td>Unified activity across all agents</td>
             </tr>
             <tr>
               <td>Soul</td>
@@ -1594,6 +1738,18 @@ echo -n "your-password" | shasum -a 256
 |----------|-------------|
 | \`AGENTMAIL_API_KEY\` | API key from agentmail.to dashboard |
 
+## Database Schema
+
+### Multi-Agent
+
+| Table | Purpose |
+|-------|---------|
+| \`agents\` | Agent configurations and status |
+| \`souls\` | Shared soul documents |
+| \`agentSkillAssignments\` | Per-agent skill assignments |
+| \`agentMcpAssignments\` | Per-agent MCP server assignments |
+| \`agentInteractions\` | Agent-to-agent communication log |
+
 ## Model Providers
 
 ### Anthropic (Claude) - Recommended
@@ -1644,11 +1800,59 @@ Skills extend your agent's capabilities. Manage them in SyncBoard → Skills.
 | Slack | Slack app with Events API |
 | Email | Resend or similar provider |
 
+## Multi-Agent System
+
+Run multiple agents simultaneously, each with independent configurations. Manage agents in SyncBoard > Agents.
+
+### Creating agents
+
+Each agent has its own name, model, provider, soul, skills, and MCP server assignments. Create agents from SyncBoard > Agents or during the setup wizard (which creates your first default agent).
+
+### Agent controls
+
+| Mode | Behavior |
+|------|----------|
+| Auto | Runs automatically, processes messages as they arrive |
+| Paused | Stops processing until resumed |
+| Single Task | Processes one message then pauses |
+| Think to Continue | Pauses after each response for user confirmation |
+
+### Shared soul documents
+
+Soul documents can be shared across agents. Create reusable souls in SyncBoard > Souls and assign them to one or many agents.
+
+### Per-agent assignments
+
+Each agent can have its own set of skills and MCP servers. Assign them in the Agent Detail page.
+
+### Agent-to-agent interaction
+
+Agents can communicate with each other via dynamically generated \`ask_agent_*\` tools.
+
+### API
+
+\`\`\`bash
+# List all agents
+GET /api/v1/agents
+
+# Chat with a specific agent
+POST /api/v1/agent/chat
+{
+  "message": "Hello",
+  "agentId": "optional-agent-id"
+}
+\`\`\`
+
+> All multi-agent features are optional. If you only have one agent, everything works exactly as before.
+
 ## SyncBoard Dashboard
 
 | Section | Purpose |
 |---------|---------|
 | Overview | Agent stats, quick actions |
+| Agents | Create and manage multiple agents |
+| Souls | Shared personality documents |
+| Agent Feed | Unified activity across all agents |
 | Soul | Edit agent personality |
 | Models | Configure AI model |
 | Skills | Manage and approve skills |

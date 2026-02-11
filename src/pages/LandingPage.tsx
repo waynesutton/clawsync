@@ -23,6 +23,7 @@ import {
   MagnifyingGlass,
   CloudArrowUp,
   Image,
+  UsersThree,
 } from "@phosphor-icons/react";
 
 export function LandingPage() {
@@ -233,6 +234,16 @@ export function LandingPage() {
               <p>
                 Supermemory integration for long-term recall. Conversations
                 stored automatically, context injected per query.
+              </p>
+            </div>
+            <div className="feature-card">
+              <div className="feature-icon">
+                <UsersThree size={32} weight="regular" />
+              </div>
+              <h3>Multi-Agent System</h3>
+              <p>
+                Run multiple agents with independent configs, skills, MCP
+                servers, and memory. Agents can interact with each other.
               </p>
             </div>
           </div>

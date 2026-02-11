@@ -9,7 +9,7 @@ Brief descriptions of key files in the ClawSync codebase.
 | `CLAUDE.md` | Project instructions for Claude Code AI assistant |
 | `README.md` | Project documentation with setup and deployment guides |
 | `features.html` | Standalone HTML features page for marketing |
-| `docs.html` | Comprehensive documentation with Mintlify-inspired design |
+| `docs.html` | Comprehensive documentation with multi-agent system docs |
 | `package.json` | Node.js dependencies and scripts |
 | `tsconfig.json` | TypeScript configuration |
 | `vite.config.ts` | Vite bundler configuration |
@@ -161,3 +161,11 @@ Brief descriptions of key files in the ClawSync codebase.
 | `clawsync-security-checklist.md` | Security checklist |
 | `AGENTS.md` | Instructions for AI coding agents |
 | `CLAUDE.md` | Claude-specific project instructions |
+
+## clawsynclanding/dist/
+
+| File | Description |
+|------|-------------|
+| `index.html` | Production landing page with features grid and challenge section |
+| `docs.html` | Production documentation with multi-agent system docs |
+| `features.html` | Production features page (mirrors root features.html) |
